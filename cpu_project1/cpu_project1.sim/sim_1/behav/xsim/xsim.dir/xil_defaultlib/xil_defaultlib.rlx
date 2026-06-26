@@ -1,0 +1,7 @@
+0.7
+2020.2
+Nov 14 2025
+19:37:27
+C:/Users/prana/Desktop/PROJECT1/cpu_project1/cpu_project1.sim/sim_1/behav/xsim/glbl.v,1756381829,verilog,,,,glbl,,uvm,,,,,,
+C:/Users/prana/Desktop/PROJECT1/rtl/and_gate.sv,1782364114,systemVerilog,,C:/Users/prana/Desktop/PROJECT1/testbench/and_gate_tb.sv,,and_gate,,uvm,../../../../../../../../../AMDDesignTools/2025.2/Vivado/data/rsb/busdef,,,,,
+C:/Users/prana/Desktop/PROJECT1/testbench/and_gate_tb.sv,1782439508,systemVerilog,,,,and_gate_tb,,uvm,../../../../../../../../../AMDDesignTools/2025.2/Vivado/data/rsb/busdef,,,,,
