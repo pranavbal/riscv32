@@ -1,0 +1,4 @@
+Running: xsim.dir/d_flip_flop_tb_behav/xsimk.exe -simmode gui -wdb d_flip_flop_tb_behav.wdb -simrunnum 0 -socket 62767
+Design successfully loaded
+Design Loading Memory Usage: 11356 KB (Peak: 11356 KB)
+Design Loading CPU Usage: 93 ms

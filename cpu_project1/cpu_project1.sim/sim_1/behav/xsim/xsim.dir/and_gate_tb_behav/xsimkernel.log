@@ -2,3 +2,6 @@ Running: xsim.dir/and_gate_tb_behav/xsimk.exe -simmode gui -wdb and_gate_tb_beha
 Design successfully loaded
 Design Loading Memory Usage: 11144 KB (Peak: 11144 KB)
 Design Loading CPU Usage: 31 ms
+Simulation completed
+Simulation Memory Usage: 12480 KB (Peak: 12480 KB)
+Simulation CPU Usage: 124 ms

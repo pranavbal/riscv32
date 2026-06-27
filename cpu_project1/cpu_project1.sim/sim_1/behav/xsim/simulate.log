@@ -1,7 +1,7 @@
 Time resolution is 1 ps
-a=0 b=0 | y=0 (expect 0)
-a=0 b=1 | y=0 (expect 0)
-a=1 b=0 | y=0 (expect 0)
-a1 b=1 | y=1 (expect 1)
+clk edge | d=0 | q=0 (expect 0)
+clk edge | d=1 | q=1 (expect 1)
+clk edge | d=0 | q=0 (expect 0)
+clk edge | d=1 | q=1 (expect 1)
 Testbench complete.
-$finish called at time : 40 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/and_gate_tb.sv" Line 28
+$finish called at time : 40 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/d_flip_flop_tb.sv" Line 35
