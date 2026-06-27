@@ -1,7 +1,11 @@
 Time resolution is 1 ps
-a=0 b=0 | sum=0 carry=0 (expect sum = 0 carry = 0)
-a=0 b=1 | sum=1 carry=0 (expect sum = 1 carry = 0)
-a=1 b=0 | sum=1 carry=0 (expect sum = 1 carry = 0)
-a=1 b=1 | sum=0 carry=1 (expect sum = 0 carry = 1)
-Testbench complete
-$finish called at time : 40 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/half_adder_tb.sv" Line 31
+a=0 b=0 cin=0 | sum=0 cout=0 (expect sum = 0 cout = 0)
+a=0 b=0 cin=1 | sum=1 cout=0 (expect sum = 1 cout = 0)
+a=0 b=1 cin=0 | sum=1 cout=0 (expect sum = 1 cout = 0)
+a=0 b=1 cin=1 | sum=0 cout=1 (expect sum = 0 cout = 1)
+a=1 b=0 cin=0 | sum=1 cout=0 (expect sum = 1 cout = 0)
+a=1 b=0 cin=1 | sum=0 cout=1 (expect sum = 0 cout = 1)
+a=1 b=1 cin=0 | sum=0 cout=1 (expect sum = 0 cout = 1)
+a=1 b=1 cin=1 | sum=1 cout=1 (expect sum = 1 cout = 1)
+Testbench complete.
+$finish called at time : 80 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/full_adder_tb.sv" Line 40
