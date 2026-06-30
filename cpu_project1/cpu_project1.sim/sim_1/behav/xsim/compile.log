@@ -1,4 +1,4 @@
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/full_adder.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module full_adder
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/testbench/full_adder_tb.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module full_adder_tb
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/register.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module register
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/testbench/register_tb.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module register_tb
