@@ -26,10 +26,11 @@ initial begin
        a = 0; b = 1; sel = 1; #10;
     $display("a=%b b=%b sel=%b | y=%b (expect 1)", a, b, sel, y);
 
-       a = 1; b = 0; sel = 1; #10;
-       $display("a=%b b=%b sel=%b | y=%b (expect 0)", a, b, sel, y);
-       $display("Testbench complete.");
-       $finish;
+        a = 1; b = 0; sel = 1; #10;
+    $display("a=%b b=%b sel=%b | y=%b (expect 0)", a, b, sel, y);
+
+    $display("Testbench complete.");
+    $finish;
 end
 
 endmodule

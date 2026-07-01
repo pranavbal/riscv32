@@ -2,3 +2,6 @@ Running: xsim.dir/bus_ops_tb_behav/xsimk.exe -simmode gui -wdb bus_ops_tb_behav.
 Design successfully loaded
 Design Loading Memory Usage: 11140 KB (Peak: 11140 KB)
 Design Loading CPU Usage: 46 ms
+Simulation completed
+Simulation Memory Usage: 12492 KB (Peak: 12492 KB)
+Simulation CPU Usage: 108 ms

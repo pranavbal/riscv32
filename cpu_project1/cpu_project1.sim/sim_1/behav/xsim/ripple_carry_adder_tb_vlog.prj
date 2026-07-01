@@ -1,7 +1,8 @@
 # compile verilog/system verilog design source files
 sv xil_defaultlib  --include "../../../../../../../../../AMDDesignTools/2025.2/Vivado/data/rsb/busdef" \
-"../../../../../rtl/bus_ops.sv" \
-"../../../../../testbench/bus_ops_tb.sv" \
+"../../../../../rtl/full_adder.sv" \
+"../../../../../rtl/ripple_carry_adder.sv" \
+"../../../../../testbench/ripple_carry_adder_tb.sv" \
 
 # compile glbl module
 verilog xil_defaultlib "glbl.v"

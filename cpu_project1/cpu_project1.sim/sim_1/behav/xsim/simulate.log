@@ -1,6 +1,6 @@
 Time resolution is 1 ps
-data_in=deadbeef | msb=1 | lower_byte=ef | swapped_halves=beefdead | replicated_bit=1111
-data_in=12345678 | msb=0 | lower_byte=78 | swapped_halves=56781234 | replicated_bit=0000
-data_in=00000001 | msb=0 | lower_byte=01 | swapped_halves=00010000 | replicated_bit=1111
-Testbench complete.
-$finish called at time : 30 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/bus_ops_tb.sv" Line 32
+a=0001 | b = 0001 | cin = 0 | sum=0010 | cout = 0 | (expect sum = 0010 cout = 0)
+a=1111 | b = 0001 | cin = 0 | sum=0000 | cout = 1 | (expect sum = 0000 cout = 1)
+a=1111 | b = 1111 | cin = 0 | sum=1110 | cout = 1 | (expect sum = 1110 cout = 1)
+Testbench complete
+$finish called at time : 30 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/ripple_carry_adder_tb.sv" Line 25

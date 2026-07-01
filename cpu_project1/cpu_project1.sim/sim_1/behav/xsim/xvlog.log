@@ -1,4 +1,6 @@
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/bus_ops.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module bus_ops
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/testbench/bus_ops_tb.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module bus_ops_tb
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/full_adder.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module full_adder
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/ripple_carry_adder.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ripple_carry_adder
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/testbench/ripple_carry_adder_tb.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module ripple_carry_adder_tb
