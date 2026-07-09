@@ -1,17 +1,17 @@
 Vivado Simulator v2025.2
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
-Running: C:/AMDDesignTools/2025.2/Vivado/bin/unwrapped/win64.o/xelab.exe --incr --debug typical --relax --mt 2 -L xil_defaultlib -L uvm -L unisims_ver -L unimacro_ver -L secureip --snapshot register_file_tb_behav xil_defaultlib.register_file_tb xil_defaultlib.glbl -log elaborate.log 
+Running: C:/AMDDesignTools/2025.2/Vivado/bin/unwrapped/win64.o/xelab.exe --incr --debug typical --relax --mt 2 -L xil_defaultlib -L uvm -L unisims_ver -L unimacro_ver -L secureip --snapshot alu_tb_behav xil_defaultlib.alu_tb xil_defaultlib.glbl -log elaborate.log 
 Using 2 slave threads.
 Starting static elaboration
 Pass Through NonSizing Optimizer
 Completed static elaboration
 Starting simulation data flow analysis
-WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/testbench/register_file_tb.sv" Line 3. Module register_file_tb doesn't have a timescale but at least one module in design has a timescale.
-WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/rtl/register_file.sv" Line 3. Module register_file doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/testbench/alu_tb.sv" Line 3. Module alu_tb doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/rtl/alu.sv" Line 3. Module alu doesn't have a timescale but at least one module in design has a timescale.
 Completed simulation data flow analysis
 Time Resolution for simulation is 1ps
-Compiling module xil_defaultlib.register_file
-Compiling module xil_defaultlib.register_file_tb
+Compiling module xil_defaultlib.alu
+Compiling module xil_defaultlib.alu_tb
 Compiling module xil_defaultlib.glbl
-Built simulation snapshot register_file_tb_behav
+Built simulation snapshot alu_tb_behav

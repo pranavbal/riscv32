@@ -1,7 +1,14 @@
 Time resolution is 1 ps
-rs1_addr=1 | rs1_data=42 (expect 42)
-rs2_addr=2 | rs2_data=100 (expect 100)
-rs1_addr=0 | rs1_data=0 (expect 0)
-wrote 999 to x0 | rs1_data=0 (expect 0)
+ADD: 10 + 20 = 30 (expect 30)
+SUB: 20 - 10 = 10 (expect 10)
+AND: 000000f0 & 000000ff = 000000f0 (expect f0)
+OR: 000000f0 | 000000ff = 000000ff (expect ff)
+XOR: 000000ff ^ 000000ff = 00000000 (expect 00)
+SLL: 1 << 4 = 16 (expect 16)
+SRL: 16 >> 2 = 4 (expect 4)
+SRA: -8 >>> 1 = -4 (expect -4)
+SLT: -1 < 1 = 1 (expect 1)
+SLTU: 4294967295 < 1 = 0 (expect 0)
+ZERO FLAG: 5 - 5 = 0 | zero=1 (expect 1)
 Testbench complete.
-$finish called at time : 80 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/register_file_tb.sv" Line 68
+$finish called at time : 110 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/alu_tb.sv" Line 65
