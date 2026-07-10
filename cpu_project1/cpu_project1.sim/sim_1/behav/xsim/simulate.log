@@ -1,14 +1,6 @@
 Time resolution is 1 ps
-ADD: 10 + 20 = 30 (expect 30)
-SUB: 20 - 10 = 10 (expect 10)
-AND: 000000f0 & 000000ff = 000000f0 (expect f0)
-OR: 000000f0 | 000000ff = 000000ff (expect ff)
-XOR: 000000ff ^ 000000ff = 00000000 (expect 00)
-SLL: 1 << 4 = 16 (expect 16)
-SRL: 16 >> 2 = 4 (expect 4)
-SRA: -8 >>> 1 = -4 (expect -4)
-SLT: -1 < 1 = 1 (expect 1)
-SLTU: 4294967295 < 1 = 0 (expect 0)
-ZERO FLAG: 5 - 5 = 0 | zero=1 (expect 1)
+addr=0 | rd=42 (expect 42)
+addr=4 | rd=100 (expect 100)
+addr=8 | rd=999 (expect 999)
 Testbench complete.
-$finish called at time : 110 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/alu_tb.sv" Line 65
+$finish called at time : 60 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/data_memory_tb.sv" Line 49
