@@ -1,6 +1,19 @@
 Time resolution is 1 ps
-addr=0 | rd=42 (expect 42)
-addr=4 | rd=100 (expect 100)
-addr=8 | rd=999 (expect 999)
+ADD | rw=1 we=0 asrc=0 aluctrl=0000 m2r=0 br=0 jmp=0
+expect: 1 0 0 0000 0 0 0
+SUB | rw=1 we=0 asrc=0 aluctrl=0001 m2r=0 br=0 jmp=0
+expect: 1 0 0 0001 0 0 0
+ADDI | rw=1 we=0 asrc=1 aluctrl=0000 m2r=0 br=0 jmp=0
+expect: 1 0 1 0000 0 0 0
+LW | rw=1 we=0 asrc=1 aluctrl=0000 m2r=1 br=0 jmp=0
+expect: 1 0 1 0000 1 0 0
+SW | rw=0 we=1 asrc=1 aluctrl=0000 m2r=0 br=0 jmp=0
+expect: 0 1 1 0000 0 0 0
+BEQ | rw=0 we=0 asrc=0 aluctrl=0001 m2r=0 br=1 jmp=0
+expect: 0 0 0 0001 0 1 0
+JAL | rw=1 we=0 asrc=0 aluctrl=0000 m2r=0 br=0 jmp=1
+expect: 1 0 0 0000 0 0 1
+LUI | rw=1 we=0 asrc=0 aluctrl=0000 m2r=0 br=0 jmp=0
+expect: 1 0 0 0000 0 0 0
 Testbench complete.
-$finish called at time : 60 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/data_memory_tb.sv" Line 49
+$finish called at time : 80 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/control_unit_tb.sv" Line 70

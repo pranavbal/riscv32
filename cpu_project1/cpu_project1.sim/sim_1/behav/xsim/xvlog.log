@@ -1,4 +1,4 @@
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/data_memory.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module data_memory
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/testbench/data_memory_tb.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module data_memory_tb
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/control_unit.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module control_unit
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/testbench/control_unit_tb.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module control_unit_tb
