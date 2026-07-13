@@ -2,3 +2,6 @@ Running: xsim.dir/immediate_generator_tb_behav/xsimk.exe -simmode gui -wdb immed
 Design successfully loaded
 Design Loading Memory Usage: 11124 KB (Peak: 11124 KB)
 Design Loading CPU Usage: 46 ms
+Simulation completed
+Simulation Memory Usage: 12300 KB (Peak: 12300 KB)
+Simulation CPU Usage: 124 ms

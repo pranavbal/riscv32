@@ -1,0 +1,9 @@
+Time resolution is 1 ps
+ADD | opcode=0110011 rd=3 funct3=000 rs1=1 rs2=0 2 funct7=0000000
+expect: 0110011 3 000 1 2 0000000
+SUB | opcode=0110011 rd=5 funct3=000 rs1=1 rs2=0 2 funct7=0100000
+expect: 0110011 5 000 1 2 0100000
+LW | opcode=0000011 rd=6 funct3=010 rs1=0 1 rs2=0 4 funct7=0000000
+expect: 0000011 6 010 1 x(4) x(0000000) (rs2 and func7 are garbage for I-type)
+Testbench complete
+$finish called at time : 30 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/instruction_decoder_tb.sv" Line 42
