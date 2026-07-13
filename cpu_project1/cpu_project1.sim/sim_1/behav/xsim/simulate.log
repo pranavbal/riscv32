@@ -1,9 +1,8 @@
 Time resolution is 1 ps
-RST=1 | pc=00000000 (expect 00000000)
-pc_next=4 | pc=00000004 (expect 00000004)
-pc_next=8 | pc=00000008 (expect 00000008)
-pc_next=C | pc=0000000c (expect 0000000c)
-branch jump | pc=00000100 (expect 00000100)
-RST=1 again | pc=00000000 (expect 00000000)
+addr=0 | instruction=00208133 (expect 00208133)
+addr=4 | instruction=00308233 (expect 00308233)
+addr=8 | instruction=00c58513 (expect 00c58513)
+addr=12 | instruction=00202223 (expect 00202223)
+addr=16 | instruction=00202503 (expect 00202503)
 Testbench complete.
-$finish called at time : 60 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/program_counter_tb.sv" Line 44
+$finish called at time : 50 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/instruction_memory_tb.sv" Line 34
