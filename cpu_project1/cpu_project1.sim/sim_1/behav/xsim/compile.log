@@ -1,4 +1,4 @@
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/control_unit.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module control_unit
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/testbench/control_unit_tb.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module control_unit_tb
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/immediate_generator.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module immediate_generator
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/testbench/immediate_generator_tb.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module immediate_generator_tb

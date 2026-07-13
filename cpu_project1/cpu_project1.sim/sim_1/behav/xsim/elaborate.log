@@ -1,17 +1,17 @@
 Vivado Simulator v2025.2
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
-Running: C:/AMDDesignTools/2025.2/Vivado/bin/unwrapped/win64.o/xelab.exe --incr --debug typical --relax --mt 2 -L xil_defaultlib -L uvm -L unisims_ver -L unimacro_ver -L secureip --snapshot control_unit_tb_behav xil_defaultlib.control_unit_tb xil_defaultlib.glbl -log elaborate.log 
+Running: C:/AMDDesignTools/2025.2/Vivado/bin/unwrapped/win64.o/xelab.exe --incr --debug typical --relax --mt 2 -L xil_defaultlib -L uvm -L unisims_ver -L unimacro_ver -L secureip --snapshot immediate_generator_tb_behav xil_defaultlib.immediate_generator_tb xil_defaultlib.glbl -log elaborate.log 
 Using 2 slave threads.
 Starting static elaboration
 Pass Through NonSizing Optimizer
 Completed static elaboration
 Starting simulation data flow analysis
-WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/testbench/control_unit_tb.sv" Line 3. Module control_unit_tb doesn't have a timescale but at least one module in design has a timescale.
-WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/rtl/control_unit.sv" Line 3. Module control_unit doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/testbench/immediate_generator_tb.sv" Line 3. Module immediate_generator_tb doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/rtl/immediate_generator.sv" Line 4. Module immediate_generator doesn't have a timescale but at least one module in design has a timescale.
 Completed simulation data flow analysis
 Time Resolution for simulation is 1ps
-Compiling module xil_defaultlib.control_unit
-Compiling module xil_defaultlib.control_unit_tb
+Compiling module xil_defaultlib.immediate_generator
+Compiling module xil_defaultlib.immediate_generator_tb
 Compiling module xil_defaultlib.glbl
-Built simulation snapshot control_unit_tb_behav
+Built simulation snapshot immediate_generator_tb_behav
