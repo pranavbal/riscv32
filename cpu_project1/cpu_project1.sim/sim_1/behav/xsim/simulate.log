@@ -1,8 +1,14 @@
 Time resolution is 1 ps
-addr=0 | instruction=00208133 (expect 00208133)
-addr=4 | instruction=00308233 (expect 00308233)
-addr=8 | instruction=00c58513 (expect 00c58513)
-addr=12 | instruction=00202223 (expect 00202223)
-addr=16 | instruction=00202503 (expect 00202503)
+RST = 1 | pc=00000000 (expect 00000000)
+Cycle 1 | pc=00000004 instr=00a00113 opcode=0010011 (expect pc=00000004)
+Cycle 2 | pc=00000008 instr=002081b3 opcode=0110011 (expect pc=00000008)
+Cycle 3 | pc=0000000c instr=00302023 opcode=0100011 (expect pc=0000000c)
+Cycle 4 | pc=00000010 instr=00002203 opcode=0000011 (expect pc=00000010)
+Cycle 5 | pc=00000014 instr=xxxxxxxx opcode=xxxxxxx (expect pc=00000014)
+x1=5 (expect 5)
+x2=10 (expect 10)
+x3=15 (expect 15)
+x4=15 (expect 15)
+mem[0]=15 (expect 15)
 Testbench complete.
-$finish called at time : 50 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/instruction_memory_tb.sv" Line 34
+$finish called at time : 60 ns : File "C:/Users/prana/Desktop/PROJECT1/testbench/datapath_tb.sv" Line 48

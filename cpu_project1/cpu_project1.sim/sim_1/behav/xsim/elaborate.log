@@ -1,9 +1,33 @@
 Vivado Simulator v2025.2
 Copyright 1986-2022 Xilinx, Inc. All Rights Reserved.
 Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
-Running: C:/AMDDesignTools/2025.2/Vivado/bin/unwrapped/win64.o/xelab.exe --incr --debug typical --relax --mt 2 -L xil_defaultlib -L uvm -L unisims_ver -L unimacro_ver -L secureip --snapshot instruction_memory_tb_behav xil_defaultlib.instruction_memory_tb xil_defaultlib.glbl -log elaborate.log 
+Running: C:/AMDDesignTools/2025.2/Vivado/bin/unwrapped/win64.o/xelab.exe --incr --debug typical --relax --mt 2 -L xil_defaultlib -L uvm -L unisims_ver -L unimacro_ver -L secureip --snapshot datapath_tb_behav xil_defaultlib.datapath_tb xil_defaultlib.glbl -log elaborate.log 
 Using 2 slave threads.
 Starting static elaboration
 Pass Through NonSizing Optimizer
 Completed static elaboration
-INFO: [XSIM 43-4323] No Change in HDL. Linking previously generated obj files to create kernel
+Starting simulation data flow analysis
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/testbench/datapath_tb.sv" Line 3. Module datapath_tb doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/rtl/datapath.sv" Line 5. Module datapath doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/rtl/program_counter.sv" Line 4. Module program_counter doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/rtl/instruction_memory.sv" Line 3. Module instruction_memory doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/rtl/instruction_decoder.sv" Line 5. Module instruction_decoder doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/rtl/immediate_generator.sv" Line 4. Module immediate_generator doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/rtl/control_unit.sv" Line 3. Module control_unit doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/rtl/register_file.sv" Line 3. Module register_file doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/rtl/alu.sv" Line 3. Module alu doesn't have a timescale but at least one module in design has a timescale.
+WARNING: [XSIM 43-4099] "C:/Users/prana/Desktop/PROJECT1/rtl/data_memory.sv" Line 3. Module data_memory doesn't have a timescale but at least one module in design has a timescale.
+Completed simulation data flow analysis
+Time Resolution for simulation is 1ps
+Compiling module xil_defaultlib.program_counter
+Compiling module xil_defaultlib.instruction_memory
+Compiling module xil_defaultlib.instruction_decoder
+Compiling module xil_defaultlib.immediate_generator
+Compiling module xil_defaultlib.control_unit
+Compiling module xil_defaultlib.register_file
+Compiling module xil_defaultlib.alu
+Compiling module xil_defaultlib.data_memory
+Compiling module xil_defaultlib.datapath
+Compiling module xil_defaultlib.datapath_tb
+Compiling module xil_defaultlib.glbl
+Built simulation snapshot datapath_tb_behav
