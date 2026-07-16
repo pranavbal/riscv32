@@ -8,7 +8,7 @@ module control_unit_tb;
     logic we;
     logic alu_src;
     logic [3:0] alu_control;
-    logic mem_to_reg;
+    logic [1:0] mem_to_reg;
     logic branch;
     logic jump;
 
@@ -29,22 +29,22 @@ module control_unit_tb;
         // R-type ADD
         opcode = 7'b0110011; funct3 = 3'b000; funct7 = 7'b0000000; #10;
         $display("ADD | rw=%b we=%b asrc=%b aluctrl=%b m2r=%b br=%b jmp=%b", reg_write, we, alu_src, alu_control, mem_to_reg, branch, jump);
-        $display("expect: 1 0 0 0000 0 0 0");
+        $display("expect: 1 0 0 0000 00 0 0");
 
         // R-type SUB
         opcode = 7'b0110011; funct3 = 3'b000; funct7 = 7'b0100000; #10;
         $display("SUB | rw=%b we=%b asrc=%b aluctrl=%b m2r=%b br=%b jmp=%b", reg_write, we, alu_src, alu_control, mem_to_reg, branch, jump);
-        $display("expect: 1 0 0 0001 0 0 0");
+        $display("expect: 1 0 0 0001 00 0 0");
 
         // I-type ADDI
         opcode = 7'b0010011; funct3 = 3'b000; funct7 = 7'b0000000; #10;
         $display("ADDI | rw=%b we=%b asrc=%b aluctrl=%b m2r=%b br=%b jmp=%b", reg_write, we, alu_src, alu_control, mem_to_reg, branch, jump);
-        $display("expect: 1 0 1 0000 0 0 0");
+        $display("expect: 1 0 1 0000 00 0 0");
 
         // I-type extended (LOAD LW)
         opcode = 7'b0000011; funct3 = 3'b010; funct7 = 7'b0000000; #10;
         $display("LW | rw=%b we=%b asrc=%b aluctrl=%b m2r=%b br=%b jmp=%b", reg_write, we, alu_src, alu_control, mem_to_reg, branch, jump);
-        $display("expect: 1 0 1 0000 1 0 0");
+        $display("expect: 1 0 1 0000 01 0 0");
 
         // S-type SW
         opcode = 7'b0100011; funct3 = 3'b010; funct7 = 7'b0000000; #10;
@@ -59,12 +59,12 @@ module control_unit_tb;
         // J-type JAL
         opcode = 7'b1101111; funct3 = 3'b000; funct7 = 7'b0000000; #10;
         $display("JAL | rw=%b we=%b asrc=%b aluctrl=%b m2r=%b br=%b jmp=%b", reg_write, we, alu_src, alu_control, mem_to_reg, branch, jump);
-        $display("expect: 1 0 0 0000 0 0 1");
+        $display("expect: 1 0 0 0000 10 0 1");
 
          // U-type LUI
         opcode = 7'b0110111; funct3 = 3'b000; funct7 = 7'b0000000; #10;
         $display("LUI | rw=%b we=%b asrc=%b aluctrl=%b m2r=%b br=%b jmp=%b", reg_write, we, alu_src, alu_control, mem_to_reg, branch, jump);
-        $display("expect: 1 0 0 0000 0 0 0");
+        $display("expect: 1 0 0 0000 11 0 0");
 
         $display("Testbench complete.");
         $finish;

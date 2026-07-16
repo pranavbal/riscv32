@@ -2,6 +2,7 @@
 sv xil_defaultlib  --include "../../../../../../../../../AMDDesignTools/2025.2/Vivado/data/rsb/busdef" \
 "../../../../../rtl/alu.sv" \
 "../../../../../rtl/control_unit.sv" \
+"../../../../../rtl/cpu.sv" \
 "../../../../../rtl/data_memory.sv" \
 "../../../../../rtl/datapath.sv" \
 "../../../../../rtl/immediate_generator.sv" \
@@ -9,7 +10,7 @@ sv xil_defaultlib  --include "../../../../../../../../../AMDDesignTools/2025.2/V
 "../../../../../rtl/instruction_memory.sv" \
 "../../../../../rtl/program_counter.sv" \
 "../../../../../rtl/register_file.sv" \
-"../../../../../testbench/datapath_tb.sv" \
+"../../../../../testbench/cpu_tb.sv" \
 
 # compile glbl module
 verilog xil_defaultlib "glbl.v"

@@ -1,4 +1,22 @@
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/alu.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module alu
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/control_unit.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module control_unit
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/cpu.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cpu
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/data_memory.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module data_memory
 INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/datapath.sv" into library xil_defaultlib
 INFO: [VRFC 10-311] analyzing module datapath
-INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/testbench/datapath_tb.sv" into library xil_defaultlib
-INFO: [VRFC 10-311] analyzing module datapath_tb
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/immediate_generator.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module immediate_generator
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/instruction_decoder.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module instruction_decoder
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/instruction_memory.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module instruction_memory
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/program_counter.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module program_counter
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/rtl/register_file.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module register_file
+INFO: [VRFC 10-2263] Analyzing SystemVerilog file "C:/Users/prana/Desktop/PROJECT1/testbench/cpu_tb.sv" into library xil_defaultlib
+INFO: [VRFC 10-311] analyzing module cpu_tb

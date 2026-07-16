@@ -23,7 +23,8 @@ module datapath(
     logic [31:0] branch_target;
 
     // Control signals from control unit
-    logic reg_write, we, alu_src, mem_to_reg, branch, jump;
+    logic reg_write, we, alu_src, branch, jump;
+    logic [1:0] mem_to_reg;
     logic [3:0] alu_control;
 
     // Program Counter
@@ -105,8 +106,16 @@ module datapath(
         .rd(mem_read_data)
     );
 
-    // Write Back MUX - select ALU result or memory data
-    assign write_back_data = mem_to_reg ? mem_read_data : alu_result;
+    // Write Back MUX - select ALU result or memory data or PC + 4, or immediate
+    always_comb begin
+        case (mem_to_reg)
+            2'b00: write_back_data = alu_result;
+            2'b01: write_back_data = mem_read_data;
+            2'b10: write_back_data = pc_plus_4;
+            2'b11: write_back_data = imm;
+            default: write_back_data = alu_result;
+        endcase
+    end
 
     // PC+4 adder
     assign pc_plus_4 = pc_current + 32'd4;

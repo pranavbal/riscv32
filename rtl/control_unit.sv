@@ -8,7 +8,7 @@ module control_unit(
     output logic we,
     output logic alu_src,
     output logic [3:0] alu_control,
-    output logic mem_to_reg,
+    output logic [1:0] mem_to_reg,
     output logic branch,
     output logic jump
 
@@ -20,7 +20,7 @@ always_comb begin
     we = 0;
     alu_src = 0;
     alu_control = 0;
-    mem_to_reg = 0;
+    mem_to_reg = 2'b00;
     branch = 0;
     jump = 0;
 
@@ -65,7 +65,7 @@ always_comb begin
         7'b0000011: begin
             reg_write = 1;
             alu_src = 1;
-            mem_to_reg = 1;
+            mem_to_reg = 2'b01;
             alu_control = 4'b0000; // ADD (formula is rs1 + immediate to find memory to load data from)
         end
         
@@ -86,6 +86,7 @@ always_comb begin
         // JAL - PC + immediate and then store PC + 4 in rd
         7'b1101111: begin
             reg_write = 1;
+            mem_to_reg = 2'b10;
             jump = 1; 
         end
 
@@ -93,6 +94,7 @@ always_comb begin
         7'b1100111: begin 
             reg_write = 1;
             alu_src = 1;
+            mem_to_reg = 2'b10;
             jump = 1;
             alu_control = 4'b0000; // ADD for rs1 + immediate
         end
@@ -100,6 +102,7 @@ always_comb begin
         // LUI - load upper immediate
         7'b0110111: begin
             reg_write = 1;
+            mem_to_reg = 2'b11;
         end
 
         // AUIPC
@@ -112,7 +115,7 @@ always_comb begin
             we          = 0;
             alu_src     = 0;
             alu_control = 4'b0000;
-            mem_to_reg  = 0;
+            mem_to_reg  = 2'b00;
             branch      = 0;
             jump        = 0;
         end
