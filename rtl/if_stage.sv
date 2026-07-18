@@ -10,8 +10,7 @@ module if_stage (
 
     //outputs going into IF_ID register
     output logic [31:0] instruction_out,
-    output logic [31:0] pc_current_out,
-    output logic [31:0] pc_plus_4_out
+    output logic [31:0] pc_current_out
 );
 
     logic [31:0] pc_current;
@@ -29,6 +28,5 @@ module if_stage (
     );
 
     assign pc_current_out = pc_current;
-    assign pc_plus_4_out = pc_current + 32'd4;
 
 endmodule
