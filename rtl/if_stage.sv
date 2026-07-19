@@ -1,5 +1,5 @@
 // if_stage.sv
-// wraps program_counter and instruction_memor into one IF stage block
+// wraps program_counter and instruction_memory into one IF stage block
 
 module if_stage (
     input logic clk,
