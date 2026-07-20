@@ -1,4 +1,5 @@
 // IF_ID pipeline register
+// pipeline register between IF and ID stages
 
 module if_id_reg (
     input logic clk,
