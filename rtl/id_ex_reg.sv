@@ -24,6 +24,8 @@ module id_ex_reg (
     input logic [1:0] mem_to_reg_in,
     input logic branch_in,
     input logic jump_in,
+    input logic auipc_in,
+    input logic jalr_in,
 
 //outputs
     output logic [31:0] pc_current_out,
@@ -41,7 +43,9 @@ module id_ex_reg (
     output logic [3:0] alu_control_out,
     output logic [1:0] mem_to_reg_out,
     output logic branch_out,
-    output logic jump_out
+    output logic jump_out,
+    output logic auipc_out,
+    output logic jalr_out
 );
 
     always_ff @(posedge clk) begin
@@ -60,6 +64,8 @@ module id_ex_reg (
             mem_to_reg_out <= 2'b0;
             branch_out <= 1'b0;
             jump_out <= 1'b0;
+            auipc_out <= 1'b0;
+            jalr_out <= 1'b0;
         end else begin
             pc_current_out <= pc_current_in;
             rs1_data_out <= rs1_data_in;
@@ -75,6 +81,8 @@ module id_ex_reg (
             mem_to_reg_out <= mem_to_reg_in;
             branch_out <= branch_in;
             jump_out <= jump_in;
+            auipc_out <= auipc_in;
+            jalr_out <= jalr_in;
         end
     end
 endmodule

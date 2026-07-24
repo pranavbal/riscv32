@@ -10,7 +10,9 @@ module control_unit(
     output logic [3:0] alu_control,
     output logic [1:0] mem_to_reg,
     output logic branch,
-    output logic jump
+    output logic jump,
+    output logic auipc,
+    output logic jalr
 
 );
 
@@ -23,6 +25,8 @@ always_comb begin
     mem_to_reg = 2'b00;
     branch = 0;
     jump = 0;
+    auipc = 0;
+    jalr = 0;
 
     case (opcode)
         // R-type - ADD, SUB, AND, OR, XOR, SLL, SRL, SRA, SLT, SLTU
@@ -97,6 +101,7 @@ always_comb begin
             mem_to_reg = 2'b10;
             jump = 1;
             alu_control = 4'b0000; // ADD for rs1 + immediate
+            jalr = 1;
         end
 
         // LUI - load upper immediate
@@ -108,6 +113,9 @@ always_comb begin
         // AUIPC
         7'b0010111: begin
             reg_write = 1;
+            alu_src = 1;
+            alu_control = 4'b0000;
+            auipc = 1;
         end
 
         default: begin
@@ -118,6 +126,8 @@ always_comb begin
             mem_to_reg  = 2'b00;
             branch      = 0;
             jump        = 0;
+            auipc       = 0;
+            jalr        = 0;
         end
     endcase
 end
