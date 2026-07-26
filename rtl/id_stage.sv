@@ -15,6 +15,11 @@ module id_stage (
     output logic [4:0] rd_addr_out,
     output logic [31:0] imm_out,
 
+    output logic auipc_out,
+    output logic jalr_out,
+
+    output logic [2:0] funct3_out,
+
     // control unit signals
     output logic reg_write_out,
     output logic we_out,
@@ -45,6 +50,8 @@ module id_stage (
         .funct7(funct7)
 
     );
+    
+    assign funct3_out = funct3;
 
     immediate_generator imm_gen (
         .instruction(instruction_in),
@@ -62,7 +69,9 @@ module id_stage (
         .alu_control(alu_control_out),
         .mem_to_reg(mem_to_reg_out),
         .branch(branch_out),
-        .jump(jump_out)
+        .jump(jump_out),
+        .auipc(auipc_out),
+        .jalr(jalr_out)
 
     );
 

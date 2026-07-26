@@ -15,6 +15,7 @@ module id_ex_reg (
     input logic [4:0] rs1_addr_in,
     input logic [4:0] rs2_addr_in,
     input logic [4:0] rd_addr_in,
+    input logic [2:0] funct3_in,
 
     // control signals produced by control_unit inside iD
     input logic reg_write_in,
@@ -36,6 +37,7 @@ module id_ex_reg (
     output logic [4:0] rs1_addr_out,
     output logic [4:0] rs2_addr_out,
     output logic [4:0] rd_addr_out,
+    output logic [2:0] funct3_out,
 
     output logic reg_write_out,
     output logic we_out,
@@ -57,6 +59,7 @@ module id_ex_reg (
             rs1_addr_out <= 5'b0;
             rs2_addr_out <= 5'b0;
             rd_addr_out <= 5'b0;
+            funct3_out <= 3'b0;
             reg_write_out <= 1'b0;
             we_out <= 1'b0;
             alu_src_out <= 1'b0;
@@ -74,6 +77,7 @@ module id_ex_reg (
             rs1_addr_out <= rs1_addr_in;
             rs2_addr_out <= rs2_addr_in;
             rd_addr_out <= rd_addr_in;
+            funct3_out <= funct3_in;
             reg_write_out <= reg_write_in;
             we_out <= we_in;
             alu_src_out <= alu_src_in;

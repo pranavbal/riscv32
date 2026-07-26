@@ -84,7 +84,15 @@ always_comb begin
         7'b1100011: begin
             alu_src = 0;
             branch  = 1;
-            alu_control = 4'b0001; // SUB to compare register values
+            case (funct3)
+                3'b000: alu_control = 4'b0001; // BEQ is SUB (check if result is zero)
+                3'b001: alu_control = 4'b0001; // BNE is SUB (check if result is not zero)
+                3'b100: alu_control = 4'b1000; // BLT is SLT (SLT outputs 1 if rs1 < rs2) so we check if result is 1
+                3'b101: alu_control = 4'b1000; // BGE is SLT (we are checking if ALU is zero with SLT)
+                3'b110: alu_control = 4'b1001; // BLTU is SLTU (same thing as BLT but unsigned)
+                3'b111: alu_control = 4'b1001; // BGEU is SLTU (same thing as BGE but unsigned)
+                default: alu_control = 4'b0001;
+            endcase
         end
 
         // JAL - PC + immediate and then store PC + 4 in rd

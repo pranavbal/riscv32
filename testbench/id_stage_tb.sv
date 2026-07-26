@@ -18,6 +18,9 @@ module id_stage_tb;
     logic [4:0] rs2_addr_out;
     logic [4:0] rd_addr_out;
     logic [31:0] imm_out;
+    logic [2:0] funct3_out;
+    logic auipc_out;
+    logic jalr_out;
 
     // control unit signals
     logic reg_write_out;
@@ -34,9 +37,11 @@ module id_stage_tb;
         .rs1_data_out(rs1_data_out), .rs2_data_out(rs2_data_out),
         .rs1_addr_out(rs1_addr_out), .rs2_addr_out(rs2_addr_out), .rd_addr_out(rd_addr_out),
         .imm_out(imm_out),
+        .auipc_out(auipc_out), .jalr_out(jalr_out),
         .reg_write_out(reg_write_out), .we_out(we_out), .alu_src_out(alu_src_out),
         .alu_control_out(alu_control_out), .mem_to_reg_out(mem_to_reg_out),
         .branch_out(branch_out), .jump_out(jump_out),
+        .funct3_out(funct3_out),
         .wb_data(wb_data), .wb_rd_addr(wb_rd_addr), .wb_reg_write(wb_reg_write)
 
     );
@@ -72,26 +77,38 @@ module id_stage_tb;
         wb_reg_write = 0;
 
         // now drive real instructions to use those registers
-        // Test 1: R-type - ADD x3, x1, x2
+        // Test 1: R-type - ADD x3, x1, x2 (funct3 = 000)
         instruction_in = 32'h002081B3;
         #1;
-        $display("ADD | rs1a=%d rs2a=%d rs1d=%h rs2d=%h rda=%h rw=%h asrc=%b actrl=%h m2r=%b",
-        rs1_addr_out, rs2_addr_out, rs1_data_out, rs2_data_out, rd_addr_out, reg_write_out, alu_src_out, alu_control_out, mem_to_reg_out);
-        $display("expect: rs1a=1 rs2a=2 rs1d=5 rs2d=10 rda=3 rw=1 asrc=0 actrl=0000 m2r=00");
+        $display("ADD | rs1a=%d rs2a=%d rs1d=%h rs2d=%h rda=%h rw=%h asrc=%b actrl=%h m2r=%b f3=%b au=%b jr=%b",
+        rs1_addr_out, rs2_addr_out, rs1_data_out, rs2_data_out, rd_addr_out, reg_write_out, alu_src_out, alu_control_out, mem_to_reg_out, funct3_out, auipc_out, jalr_out);
+        $display("expect: rs1a=1 rs2a=2 rs1d=5 rs2d=10 rda=3 rw=1 asrc=0 actrl=0000 m2r=00 f3=000 au=0 jr=0");
 
-        // Test 2: I-type - ADDI x4, x1, 100
+        // Test 2: I-type - ADDI x4, x1, 100 (funct3 = 000)
         instruction_in = 32'h06408213;
         #1;
-        $display("ADDI | rs1a=%d rs1d=%h rda=%h imm=%0d rw=%h asrc=%b actrl=%h m2r=%b",
-        rs1_addr_out, rs1_data_out, rd_addr_out, imm_out, reg_write_out, alu_src_out, alu_control_out, mem_to_reg_out);
-        $display("expect: rs1a=1 rs1d=5 rda=4 imm=100 rw=1 asrc=1 actrl=0000 m2r=00");
+        $display("ADDI | rs1a=%d rs1d=%h rda=%h imm=%0d rw=%h asrc=%b actrl=%h m2r=%b f3=%b au=%b jr=%b",
+        rs1_addr_out, rs1_data_out, rd_addr_out, imm_out, reg_write_out, alu_src_out, alu_control_out, mem_to_reg_out, funct3_out, auipc_out, jalr_out);
+        $display("expect: rs1a=1 rs1d=5 rda=4 imm=100 rw=1 asrc=1 actrl=0000 m2r=00 f3=000 au=0 jr=0");
 
-        // Test 3: I-type - LW x5, 8(x1)
-        instruction_in = 32'h00808283;
+        // Test 3: I-type - LW x5, 8(x1) (funct3 = 010)
+        instruction_in = 32'h0080A283;
         #1;
-        $display("LW | rs1a=%d rs1d=%h rda=%h imm=%0d rw=%h asrc=%b actrl=%h m2r=%b",
-        rs1_addr_out, rs1_data_out, rd_addr_out, imm_out, reg_write_out, alu_src_out, alu_control_out, mem_to_reg_out);
-        $display("expect: rs1a=1 rs1d=5 rda=5 imm=8 rw=1 asrc=1 actrl=0000 m2r=01");
+        $display("LW | rs1a=%d rs1d=%h rda=%h imm=%0d rw=%h asrc=%b actrl=%h m2r=%b f3=%b au=%b jr=%b",
+        rs1_addr_out, rs1_data_out, rd_addr_out, imm_out, reg_write_out, alu_src_out, alu_control_out, mem_to_reg_out, funct3_out, auipc_out, jalr_out);
+        $display("expect: rs1a=1 rs1d=5 rda=5 imm=8 rw=1 asrc=1 actrl=0000 m2r=01 f3=010 au=0 jr=0");
+
+        // Test 4: AUIPC x5, 0
+        instruction_in = 32'h00000297;
+        #1;
+        $display("rda=%h rw=%h asrc=%b actrl=%h m2r=%b au=%b jr=%b", rd_addr_out, reg_write_out, alu_src_out, alu_control_out, mem_to_reg_out, auipc_out, jalr_out);
+        $display("expect: rda=5 rw=1 asrc=1 actrl=0000 m2r=00 au=1 jr=0");
+
+        // Test 5: JALR x8, 4(x1)
+        instruction_in = 32'h00408467;
+        #1;
+        $display("rda=%h rs1a=%d rw=%h asrc=%b actrl=%h m2r=%b jr=%b au=%b", rd_addr_out, rs1_addr_out, reg_write_out, alu_src_out, alu_control_out, mem_to_reg_out, jalr_out, auipc_out);
+        $display("expect: rda=8 rs1a=1 rw=1 asrc=1 actrl=0000 m2r=10 jr=1 au=0");   
 
         $display("Testbench complete.");
         $finish;
