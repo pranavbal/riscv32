@@ -80,6 +80,16 @@ module control_unit_tb;
         $display("ADD | rw=%b we=%b asrc=%b aluctrl=%b m2r=%b br=%b jmp=%b au=%b jr=%b", reg_write, we, alu_src, alu_control, mem_to_reg, branch, jump, auipc, jalr);
         $display("expect: 1 0 1 0000 00 0 0 1 0");
 
+        // FENCE
+        opcode = 7'b0001111; funct3 = 3'b000; funct7 = 7'b0000000; #10;
+        $display("ADD | rw=%b we=%b asrc=%b aluctrl=%b m2r=%b br=%b jmp=%b au=%b jr=%b", reg_write, we, alu_src, alu_control, mem_to_reg, branch, jump, auipc, jalr);
+        $display("expect: 0 0 0 0000 00 0 0 0 0");
+
+        // ECALL / EBREAK
+        opcode = 7'b1110011; funct3 = 3'b000; funct7 = 7'b0000000; #10;
+        $display("ADD | rw=%b we=%b asrc=%b aluctrl=%b m2r=%b br=%b jmp=%b au=%b jr=%b", reg_write, we, alu_src, alu_control, mem_to_reg, branch, jump, auipc, jalr);
+        $display("expect: 0 0 0 0000 00 0 0 0 0");
+
         $display("Testbench complete.");
         $finish;
 

@@ -3,12 +3,14 @@
 module program_counter_tb;
     logic clk;
     logic rst;
+    logic stall;
     logic [31:0] pc_next;
     logic [31:0] pc;
 
     program_counter uut(
         .clk(clk),
         .rst(rst),
+        .stall(stall),
         .pc_next(pc_next),
         .pc(pc)
     );
@@ -32,10 +34,16 @@ module program_counter_tb;
         pc_next = 32'h0000000C; #10;
         $display("pc_next=C | pc=%h (expect 0000000c)", pc);
 
-        // Simulate a branch jumping far ahead
+        // Test stall: PC should hold current value, ignoring pc_next
+        stall = 1;
+        pc_next = 32'h00000FFF; #10;
+        $display("STALL=1 | pc=%h (expect 0000000c, held)", pc);
+
+        // Release stall: PC should continue normally 
+        stall = 0;
         pc_next = 32'h00000100; #10;
         $display("branch jump | pc=%h (expect 00000100)", pc);
-
+              
         // Apply reset again
         rst = 1; #10;
         $display("RST=1 again | pc=%h (expect 00000000)", pc);

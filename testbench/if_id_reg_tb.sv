@@ -1,13 +1,14 @@
 // if_id_reg_tb.sv
 
 module if_id_reg_tb;
-    logic clk, rst;
+    logic clk, rst, stall;
     logic [31:0] instruction_in, pc_current_in;
     logic [31:0] instruction_out, pc_current_out;
 
     if_id_reg uut (
         .clk(clk),
         .rst(rst),
+        .stall(stall),
         .instruction_in(instruction_in),
         .pc_current_in(pc_current_in),
         .instruction_out(instruction_out),
@@ -20,6 +21,7 @@ module if_id_reg_tb;
     initial begin
         // test 1: reset should make everything zero
         rst = 1;
+        stall = 0;
         instruction_in = 32'hDEADBEEF;
         pc_current_in = 32'h00000010;  
         @(posedge clk); #1; 
@@ -41,11 +43,18 @@ module if_id_reg_tb;
         $display("Cycle 2 |instr=%h pc=%h", instruction_out, pc_current_out);
         $display("expect: 00208463 00000008");
         
-        // Test 4
+        // Test 4 - STALL - drive different values, output should HOLD previous cycle's values
+        stall = 1;
         instruction_in = 32'hDEADBEEF;
         pc_current_in = 32'h0000000C;
         @(posedge clk); #1;
-        $display("Cycle 3 |instr=%h pc=%h", instruction_out, pc_current_out);
+        $display("Cycle 3 (stalled) |instr=%h pc=%h", instruction_out, pc_current_out);
+        $display("expect: 00208463 00000008");
+
+        // Test 5: release stall, should now capture what was sitting on input
+        stall = 0;
+        @(posedge clk); #1;
+        $display("Cycle 4 (resume) |instr=%h pc=%h", instruction_out, pc_current_out);
         $display("expect: DEADBEEF 0000000c");
 
         $display("Testbench complete.");

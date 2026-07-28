@@ -4,6 +4,7 @@
 module program_counter(
     input logic clk,
     input logic rst,
+    input logic stall,
     input logic [31:0] pc_next,
     output logic [31:0] pc
 
@@ -13,6 +14,8 @@ module program_counter(
     always_ff @(posedge clk) begin
         if (rst)
             pc <= 32'h00000000;
+        else if (stall)
+            pc <= pc;   // stalls for one cycle (holds current value)
         else
             pc <= pc_next;
     end

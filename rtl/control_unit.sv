@@ -126,6 +126,16 @@ always_comb begin
             auipc = 1;
         end
 
+        // FENCE - no operation (used for multi-core synchronization, out-of-order execution)
+        7'b0001111: begin
+            // nothing happens
+        end
+
+        // ECALL / EBREAK - no operation (no OS or debugger)
+        7'b1110011: begin
+            // nothing happens
+        end
+
         default: begin
             reg_write   = 0;
             we          = 0;
