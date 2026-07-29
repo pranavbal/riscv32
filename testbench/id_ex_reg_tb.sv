@@ -1,7 +1,7 @@
 // id_ex_reg_tb.sv
 
 module id_ex_reg_tb;
-    logic clk, rst;
+    logic clk, rst, stall, flush;
 
     // inputs
     logic [31:0] pc_current_in;
@@ -24,6 +24,8 @@ module id_ex_reg_tb;
     id_ex_reg uut (
         .clk(clk), 
         .rst(rst),
+        .stall(stall),
+        .flush(flush),
         .pc_current_in(pc_current_in), .pc_current_out(pc_current_out),
         .rs1_data_in(rs1_data_in), .rs1_data_out(rs1_data_out),
         .rs2_data_in(rs2_data_in), .rs2_data_out(rs2_data_out),
@@ -56,6 +58,8 @@ module id_ex_reg_tb;
     initial begin
         // Test 1: reset everything; zero everything 
         rst = 1;
+        stall = 0;
+        flush = 0;
         pc_current_in = 32'hFFFFFFFF;
         rs1_data_in = 32'hFFFFFFFF;
         rs2_data_in = 32'hFFFFFFFF;
@@ -167,6 +171,26 @@ module id_ex_reg_tb;
         display_outputs("Cycle 4");
         $display("expect: pc=50 rs1d=200 rs2d=0 imm=10 rs1a=0 rs2a=0 rda=8 f3=000 rw=1 we=1 asrc=1 actrl=0 m2r=10 br=0 jmp=1 au=0 jr=1");
         
+
+        // Test 6: STALL - drive different values, output should be a BUBBLE (all zero)
+        stall = 1;
+        pc_current_in = 32'h00000200;
+        rs1_data_in = 32'd77;
+        rd_addr_in = 5'd12;
+        reg_write_in = 1;
+        @(posedge clk); #1;
+        display_outputs("Cycle 5 (stall)");
+        $display("expect: pc=0 rs1d=0 rs2d=0 imm=0 rs1a=0 rs2a=0 rda=0 f3=000 rw=0 we=0 asrc=0 actrl=0 m2r=00 br=0 jmp=0 au=0 jr=0");
+
+         // Test 7: FLUSH - release stall, assert flush instead, should still do all zeros
+        stall = 0;
+        flush = 1;
+        pc_current_in = 32'h00000300;
+        rd_addr_in = 5'd15;
+        @(posedge clk); #1;
+        display_outputs("Cycle 6 (flush bubble)");
+        $display("expect: pc=0 rs1d=0 rs2d=0 imm=0 rs1a=0 rs2a=0 rda=0 f3=000 rw=0 we=0 asrc=0 actrl=0 m2r=00 br=0 jmp=0 au=0 jr=0");
+
         $display("Testbench complete.");
         $finish;
 

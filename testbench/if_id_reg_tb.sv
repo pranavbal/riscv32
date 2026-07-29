@@ -1,7 +1,7 @@
 // if_id_reg_tb.sv
 
 module if_id_reg_tb;
-    logic clk, rst, stall;
+    logic clk, rst, stall, flush;
     logic [31:0] instruction_in, pc_current_in;
     logic [31:0] instruction_out, pc_current_out;
 
@@ -9,6 +9,7 @@ module if_id_reg_tb;
         .clk(clk),
         .rst(rst),
         .stall(stall),
+        .flush(flush),
         .instruction_in(instruction_in),
         .pc_current_in(pc_current_in),
         .instruction_out(instruction_out),
@@ -22,6 +23,7 @@ module if_id_reg_tb;
         // test 1: reset should make everything zero
         rst = 1;
         stall = 0;
+        flush = 0;
         instruction_in = 32'hDEADBEEF;
         pc_current_in = 32'h00000010;  
         @(posedge clk); #1; 
@@ -51,11 +53,20 @@ module if_id_reg_tb;
         $display("Cycle 3 (stalled) |instr=%h pc=%h", instruction_out, pc_current_out);
         $display("expect: 00208463 00000008");
 
-        // Test 5: release stall, should now capture what was sitting on input
-        stall = 0;
+        // Test 5: FLUSH while stall is still active - flush should win, outputs all go to zero
+        flush = 1;
         @(posedge clk); #1;
-        $display("Cycle 4 (resume) |instr=%h pc=%h", instruction_out, pc_current_out);
-        $display("expect: DEADBEEF 0000000c");
+        $display("Cycle 4 (stall+flush) |instr=%h pc=%h", instruction_out, pc_current_out);
+        $display("expect: 00000000 00000000");
+        
+        // Test 6: release both stall and flush, should now resume
+        stall = 0;
+        flush = 0;
+        instruction_in = 32'h00500113;
+        pc_current_in = 32'h00000020;
+        @(posedge clk); #1;
+        $display("Cycle 5 (resume) |instr=%h pc=%h", instruction_out, pc_current_out);
+        $display("expect: 00500113 00000020");
 
         $display("Testbench complete.");
         $finish;

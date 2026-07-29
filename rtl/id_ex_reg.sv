@@ -4,7 +4,8 @@
 module id_ex_reg (
     input logic clk,
     input logic rst,
-//inputs
+    input logic stall,
+    input logic flush,
     // carried forward from IF and then through IF_ID
     input logic [31:0] pc_current_in,
 
@@ -51,7 +52,7 @@ module id_ex_reg (
 );
 
     always_ff @(posedge clk) begin
-        if (rst) begin
+        if (rst || flush || stall ) begin
             pc_current_out <= 32'b0;
             rs1_data_out <= 32'b0;
             rs2_data_out <= 32'b0;
