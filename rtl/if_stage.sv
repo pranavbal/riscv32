@@ -4,6 +4,7 @@
 module if_stage (
     input logic clk,
     input logic rst,
+    input logic stall,
 
     // PC-next comes from outside IF from EX stage
     input logic [31:0] pc_next_in,
@@ -18,6 +19,7 @@ module if_stage (
     program_counter pc_reg (
         .clk(clk),
         .rst(rst),
+        .stall(stall),
         .pc_next(pc_next_in),
         .pc(pc_current)
     );

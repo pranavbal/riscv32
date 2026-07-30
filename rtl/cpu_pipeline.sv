@@ -12,10 +12,12 @@ module cpu_pipeline (
     // if_stage
     logic [31:0] if_instruction;
     logic [31:0] if_pc_current;
+    logic if_stall;
 
     if_stage IF (
         .clk(clk),
         .rst(rst),
+        .stall(if_stall),
         .pc_next_in(pc_next),
         .instruction_out(if_instruction),
         .pc_current_out(if_pc_current)
@@ -23,10 +25,14 @@ module cpu_pipeline (
     //----------------------------------
     // if_id register
     logic[31:0] ifid_instruction, ifid_pc_current;
+    logic ifid_stall;
+    logic ifid_flush;
 
     if_id_reg IF_ID (
         .clk(clk),
         .rst(rst),
+        .stall(ifid_stall),
+        .flush(ifid_flush),
         .instruction_in(if_instruction),
         .pc_current_in(if_pc_current),
         .instruction_out(ifid_instruction),
@@ -58,6 +64,10 @@ module cpu_pipeline (
     logic [4:0] wb_write_back_addr;
     logic       wb_reg_write_final;
 
+    logic [2:0] id_funct3;
+    logic id_auipc;
+    logic id_jalr;
+
     id_stage ID (
         .clk(clk),
         .rst(rst),
@@ -77,7 +87,10 @@ module cpu_pipeline (
         .alu_control_out(id_alu_control),
         .mem_to_reg_out(id_mem_to_reg),
         .branch_out(id_branch),
-        .jump_out(id_jump)
+        .jump_out(id_jump),
+        .funct3_out(id_funct3),
+        .auipc_out(id_auipc),
+        .jalr_out(id_jalr)
     );
 
     //----------------------------------
@@ -98,10 +111,17 @@ module cpu_pipeline (
     logic idex_jump;
     logic [3:0] idex_alu_control;
     logic [1:0] idex_mem_to_reg;
+    logic [2:0] idex_funct3;
+    logic idex_auipc;
+    logic idex_jalr;
+    logic idex_stall;
+    logic idex_flush;
 
     id_ex_reg ID_EX (
         .clk(clk),
         .rst(rst),
+        .stall(idex_stall),
+        .flush(idex_flush),
         .pc_current_in(ifid_pc_current),
         .rs1_data_in(id_rs1_data),
         .rs2_data_in(id_rs2_data),
@@ -109,6 +129,7 @@ module cpu_pipeline (
         .rs1_addr_in(id_rs1_addr),
         .rs2_addr_in(id_rs2_addr),
         .rd_addr_in(id_rd_addr),
+        .funct3_in(id_funct3),
         .reg_write_in(id_reg_write),
         .we_in(id_we),
         .alu_src_in(id_alu_src),
@@ -116,6 +137,8 @@ module cpu_pipeline (
         .mem_to_reg_in(id_mem_to_reg),
         .branch_in(id_branch),
         .jump_in(id_jump),
+        .auipc_in(id_auipc),
+        .jalr_in(id_jalr),
 
         .pc_current_out(idex_pc_current),
         .rs1_data_out(idex_rs1_data),
@@ -124,16 +147,64 @@ module cpu_pipeline (
         .rs1_addr_out(idex_rs1_addr),
         .rs2_addr_out(idex_rs2_addr),
         .rd_addr_out(idex_rd_addr),
+        .funct3_out(idex_funct3),
         .reg_write_out(idex_reg_write),
         .we_out(idex_we),
         .alu_src_out(idex_alu_src),
         .alu_control_out(idex_alu_control),
         .mem_to_reg_out(idex_mem_to_reg),
         .branch_out(idex_branch),
-        .jump_out(idex_jump)
+        .jump_out(idex_jump),
+        .auipc_out(idex_auipc),
+        .jalr_out(idex_jalr)
 
     );
 
+    // --- HAZARD DETECTION ---
+    logic [1:0] forward_a;
+    logic [1:0] forward_b;
+
+    hazard_detection_unit HDU (
+        .idex_rs1_addr(idex_rs1_addr),
+        .idex_rs2_addr(idex_rs2_addr),
+        .exmem_rd_addr(exmem_rd_addr),
+        .exmem_reg_write(exmem_reg_write),
+        .memwb_rd_addr(memwb_rd_addr),
+        .memwb_reg_write(memwb_reg_write),
+        .forward_a(forward_a),
+        .forward_b(forward_b)
+
+    );
+
+    // --- LOAD-USE STALL DETECTION ---
+    logic lu_stall;
+
+    lu_stall_unit LSU (
+        .idex_mem_to_reg(idex_mem_to_reg),
+        .idex_rd_addr(idex_rd_addr),
+        .id_rs1_addr(id_rs1_addr),
+        .id_rs2_addr(id_rs2_addr),
+        .stall(lu_stall)
+    );
+
+    assign if_stall = lu_stall;
+    assign ifid_stall = lu_stall;
+    assign idex_stall = lu_stall;
+
+    // --- FORWARDING ---
+    logic [31:0] fwd_alu_operand_a;
+    logic [31:0] fwd_alu_operand_b;
+
+    forwarding_unit FU (
+        .idex_rs1_data(idex_rs1_data),
+        .idex_rs2_data(idex_rs2_data),
+        .exmem_alu_result(exmem_alu_result),
+        .wb_write_back_data(wb_write_back_data),
+        .forward_a(forward_a),
+        .forward_b(forward_b),
+        .alu_operand_a(fwd_alu_operand_a),
+        .alu_operand_b(fwd_alu_operand_b)
+    );
     //----------------------------------------------------------------
     // ex_stage
 
@@ -144,11 +215,13 @@ module cpu_pipeline (
 
     ex_stage EX (
         .pc_current_in(idex_pc_current),
-        .rs1_data_in(idex_rs1_data),
-        .rs2_data_in(idex_rs2_data),
+        .rs1_data_in(fwd_alu_operand_a),
+        .rs2_data_in(fwd_alu_operand_b),
         .imm_in(idex_imm),
         .alu_src_in(idex_alu_src),
         .alu_control_in(idex_alu_control),
+        .auipc_in(idex_auipc),
+        .jalr_in(idex_jalr),
 
         .alu_result_out(ex_alu_result),
         .zero_out(ex_zero),
@@ -159,18 +232,70 @@ module cpu_pipeline (
 
     // PC-next MUX- uses EX's zero / branch_target result
     
-    // branch / jump is carried through ID / EX (bypassing ex_stage)
+    // --- BRANCH CONDITION ---
+    logic branch_taken;
+    
+    branch_condition_unit BCU (
+        .funct3(idex_funct3),
+        .zero(ex_zero),
+        .alu_result(ex_alu_result),
+        .branch_taken(branch_taken)
 
+    );
+
+    // --- Control hazard (flush) ---
+    logic ch_flush;
+    
+    control_hazard_unit CHU (
+        .idex_branch(idex_branch),
+        .ex_zero(branch_taken),    
+        .idex_jump(idex_jump),
+        .flush(ch_flush)
+    );
+
+    assign ifid_flush = ch_flush;
+    assign idex_flush = ch_flush;
+
+    // --- BRANCH PREDICTOR AND BTB ---
+    logic predict_taken;
+    logic btb_valid;
+    logic [31:0] btb_target;
+
+    branch_predictor BP (
+        .clk(clk),
+        .rst(rst),
+        .predict_pc(if_pc_current),
+        .predict_taken(predict_taken),
+        .update_valid(idex_branch),
+        .update_pc(idex_pc_current),
+        .actual_taken(branch_taken)
+
+    );
+
+    branch_target_buffer BTB (
+        .clk(clk),
+        .rst(rst),
+        .lookup_pc(if_pc_current),
+        .btb_target(btb_target),
+        .btb_valid(btb_valid),
+        .update_valid(idex_branch),
+        .update_pc(idex_pc_current),
+        .update_target(ex_branch_target)
+
+    );
+
+    // --- PC-NEXT MUX (THREE LEVELS) ---
     always_comb begin
-        if (idex_jump)
+        if (idex_jump || (idex_branch && branch_taken))
             pc_next = ex_branch_target;
-        else if (idex_branch && ex_zero)
-            pc_next = ex_branch_target;
+        else if (predict_taken && btb_valid)
+            pc_next = btb_target;
         else
-            pc_next = if_pc_current + 32'd4; // default next instruction
+            pc_next = if_pc_current + 32'd4;
+        end
 
-    end
 
+  
     //----------------------------------
     // ex_mem register
 
@@ -179,6 +304,7 @@ module cpu_pipeline (
     logic [31:0] exmem_pc_plus_4;
     logic [31:0] exmem_imm;
     logic[4:0] exmem_rd_addr;
+    logic [2:0] exmem_funct3;
     logic [1:0] exmem_mem_to_reg;
     logic exmem_zero;
     logic exmem_reg_write;
@@ -188,10 +314,11 @@ module cpu_pipeline (
         .clk(clk),
         .rst(rst),
         .alu_result_in(ex_alu_result),
-        .rs2_data_in(idex_rs2_data),
+        .rs2_data_in(fwd_alu_operand_b),
         .pc_plus_4_in(ex_pc_plus_4),
         .imm_in(idex_imm),
         .rd_addr_in(idex_rd_addr),
+        .funct3_in(idex_funct3),
         .zero_in(ex_zero),
         .reg_write_in(idex_reg_write),
         .we_in(idex_we),
@@ -202,6 +329,7 @@ module cpu_pipeline (
         .pc_plus_4_out(exmem_pc_plus_4),
         .imm_out(exmem_imm),
         .rd_addr_out(exmem_rd_addr),
+        .funct3_out(exmem_funct3),
         .zero_out(exmem_zero),
         .reg_write_out(exmem_reg_write),
         .we_out(exmem_we),
@@ -219,6 +347,7 @@ module cpu_pipeline (
         .we_in(exmem_we),
         .alu_result_in(exmem_alu_result),
         .rs2_data_in(exmem_rs2_data),
+        .funct3_in(exmem_funct3),
         .mem_read_data_out(mem_read_data)
     );
 

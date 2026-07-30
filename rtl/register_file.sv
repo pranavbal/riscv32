@@ -17,10 +17,14 @@ module register_file (
     logic [31:0] registers[0:31];
 
     // Read port 1 - combinational
-    assign rs1_data = (rs1_addr == 5'b00000) ? 32'b0 : registers[rs1_addr];
+    assign rs1_data = (rs1_addr == 5'b00000) ? 32'b0 : 
+                        (reg_write && rd_addr == rs1_addr) ? rd_data : 
+                        registers[rs1_addr];
 
     // Read port 2 - combinational
-    assign rs2_data = (rs2_addr == 5'b00000) ? 32'b0 : registers[rs2_addr];
+    assign rs2_data = (rs2_addr == 5'b00000) ? 32'b0 : 
+                        (reg_write && rd_addr == rs2_addr) ? rd_data : 
+                        registers[rs2_addr];
 
     // Write port - sequential (on clock edge)
 
