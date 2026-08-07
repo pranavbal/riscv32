@@ -29,6 +29,8 @@ module id_ex_reg (
     input logic auipc_in,
     input logic jalr_in,
 
+    input logic predicted_taken_in,
+
 //outputs
     output logic [31:0] pc_current_out,
 
@@ -48,7 +50,9 @@ module id_ex_reg (
     output logic branch_out,
     output logic jump_out,
     output logic auipc_out,
-    output logic jalr_out
+    output logic jalr_out,
+
+    output logic predicted_taken_out
 );
 
     always_ff @(posedge clk) begin
@@ -70,6 +74,7 @@ module id_ex_reg (
             jump_out <= 1'b0;
             auipc_out <= 1'b0;
             jalr_out <= 1'b0;
+            predicted_taken_out <= 1'b0;
         end else begin
             pc_current_out <= pc_current_in;
             rs1_data_out <= rs1_data_in;
@@ -88,6 +93,7 @@ module id_ex_reg (
             jump_out <= jump_in;
             auipc_out <= auipc_in;
             jalr_out <= jalr_in;
+            predicted_taken_out <= predicted_taken_in;
         end
     end
 endmodule

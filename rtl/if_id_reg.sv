@@ -8,20 +8,25 @@ module if_id_reg (
     input logic flush,
     input logic [31:0] instruction_in,
     input logic [31:0] pc_current_in,
+    input logic predicted_taken_in,
     output logic [31:0] instruction_out,
-    output logic [31:0] pc_current_out
+    output logic [31:0] pc_current_out,
+    output logic predicted_taken_out
 );
 
     always_ff @(posedge clk) begin
         if (rst || flush) begin
             instruction_out <= 32'b0;
             pc_current_out <= 32'b0;
+            predicted_taken_out <= 0;
         end else if (stall) begin
             instruction_out <= instruction_out;  // stall
             pc_current_out <= pc_current_out;    // stall
+            predicted_taken_out <= predicted_taken_out;
         end else begin
             instruction_out <= instruction_in;
             pc_current_out <= pc_current_in;
+            predicted_taken_out <= predicted_taken_in;
         end
     end
 endmodule

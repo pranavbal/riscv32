@@ -1,5 +1,5 @@
 // cpu_pipeline.sv
-// Top-level pipeline wrapper - Pass 1 (no hazard handling yet)
+// Top-level pipeline wrapper
 
 module cpu_pipeline (
     input logic clk,
@@ -27,6 +27,8 @@ module cpu_pipeline (
     logic[31:0] ifid_instruction, ifid_pc_current;
     logic ifid_stall;
     logic ifid_flush;
+    logic ifid_predicted_taken;
+
 
     if_id_reg IF_ID (
         .clk(clk),
@@ -36,7 +38,9 @@ module cpu_pipeline (
         .instruction_in(if_instruction),
         .pc_current_in(if_pc_current),
         .instruction_out(ifid_instruction),
-        .pc_current_out(ifid_pc_current)
+        .pc_current_out(ifid_pc_current),
+        .predicted_taken_in(predict_taken),
+        .predicted_taken_out(ifid_predicted_taken)
     
     );
     //----------------------------------------------------------------
@@ -116,6 +120,7 @@ module cpu_pipeline (
     logic idex_jalr;
     logic idex_stall;
     logic idex_flush;
+    logic idex_predicted_taken;
 
     id_ex_reg ID_EX (
         .clk(clk),
@@ -139,6 +144,7 @@ module cpu_pipeline (
         .jump_in(id_jump),
         .auipc_in(id_auipc),
         .jalr_in(id_jalr),
+        .predicted_taken_in(ifid_predicted_taken),
 
         .pc_current_out(idex_pc_current),
         .rs1_data_out(idex_rs1_data),
@@ -156,7 +162,8 @@ module cpu_pipeline (
         .branch_out(idex_branch),
         .jump_out(idex_jump),
         .auipc_out(idex_auipc),
-        .jalr_out(idex_jalr)
+        .jalr_out(idex_jalr),
+        .predicted_taken_out(idex_predicted_taken)
 
     );
 
@@ -230,7 +237,6 @@ module cpu_pipeline (
 
     );
 
-    // PC-next MUX- uses EX's zero / branch_target result
     
     // --- BRANCH CONDITION ---
     logic branch_taken;
@@ -250,7 +256,8 @@ module cpu_pipeline (
         .idex_branch(idex_branch),
         .ex_zero(branch_taken),    
         .idex_jump(idex_jump),
-        .flush(ch_flush)
+        .flush(ch_flush),
+        .idex_predicted_taken(idex_predicted_taken)
     );
 
     assign ifid_flush = ch_flush;
@@ -286,8 +293,8 @@ module cpu_pipeline (
 
     // --- PC-NEXT MUX (THREE LEVELS) ---
     always_comb begin
-        if (idex_jump || (idex_branch && branch_taken))
-            pc_next = ex_branch_target;
+        if (idex_jump || (idex_branch && (idex_predicted_taken != branch_taken)))
+            pc_next = branch_taken ? ex_branch_target : ex_pc_plus_4;
         else if (predict_taken && btb_valid)
             pc_next = btb_target;
         else
@@ -306,7 +313,6 @@ module cpu_pipeline (
     logic[4:0] exmem_rd_addr;
     logic [2:0] exmem_funct3;
     logic [1:0] exmem_mem_to_reg;
-    logic exmem_zero;
     logic exmem_reg_write;
     logic exmem_we;
 
@@ -319,7 +325,6 @@ module cpu_pipeline (
         .imm_in(idex_imm),
         .rd_addr_in(idex_rd_addr),
         .funct3_in(idex_funct3),
-        .zero_in(ex_zero),
         .reg_write_in(idex_reg_write),
         .we_in(idex_we),
         .mem_to_reg_in(idex_mem_to_reg),
@@ -330,7 +335,6 @@ module cpu_pipeline (
         .imm_out(exmem_imm),
         .rd_addr_out(exmem_rd_addr),
         .funct3_out(exmem_funct3),
-        .zero_out(exmem_zero),
         .reg_write_out(exmem_reg_write),
         .we_out(exmem_we),
         .mem_to_reg_out(exmem_mem_to_reg)

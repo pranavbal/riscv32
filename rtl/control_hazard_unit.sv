@@ -6,6 +6,7 @@ module control_hazard_unit (
     input logic idex_branch,
     input logic ex_zero,
     input logic idex_jump,
+    input logic idex_predicted_taken,
 
     output logic flush
 );
@@ -15,8 +16,7 @@ module control_hazard_unit (
 
         if (idex_jump)
             flush = 1'b1;
-
-        else if (idex_branch && ex_zero)
+        else if (idex_branch && (idex_predicted_taken != ex_zero)) //ex zero is basically just branch taken
             flush = 1'b1;
         end
 endmodule 

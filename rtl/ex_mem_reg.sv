@@ -11,7 +11,6 @@ module ex_mem_reg(
     input logic [31:0] imm_in,
     input logic [4:0] rd_addr_in,
     input logic [2:0] funct3_in,
-    input logic zero_in,
 
     // control signals passed forward
     input logic reg_write_in,
@@ -25,7 +24,6 @@ module ex_mem_reg(
     output logic [31:0] imm_out,
     output logic [4:0] rd_addr_out,
     output logic [2:0] funct3_out,
-    output logic zero_out,
 
     // 
     output logic reg_write_out,
@@ -42,7 +40,6 @@ always_ff @(posedge clk) begin
         imm_out <= 32'b0;
         rd_addr_out <= 5'b0;
         funct3_out <= 3'b0;
-        zero_out <= 1'b0;
         reg_write_out <= 1'b0;
         we_out <= 1'b0;
         mem_to_reg_out <= 2'b0;
@@ -53,7 +50,6 @@ always_ff @(posedge clk) begin
         imm_out <= imm_in;
         rd_addr_out <= rd_addr_in;
         funct3_out <= funct3_in;
-        zero_out <= zero_in;
         reg_write_out <= reg_write_in;
         we_out <= we_in;
         mem_to_reg_out <= mem_to_reg_in;
