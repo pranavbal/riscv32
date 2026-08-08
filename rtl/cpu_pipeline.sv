@@ -14,11 +14,24 @@ module cpu_pipeline (
     logic [31:0] if_pc_current;
     logic if_stall;
 
+    // driver connections for injecting instructions
+    logic drv_we;
+    logic [31:0] drv_waddr;
+    logic [31:0] drv_wdata;
+
+    // change later once driver is verification is functional
+    assign drv_we = 1'b0;
+    assign drv_waddr = 32'b0;
+    assign drv_wdata = 32'b0;
+
     if_stage IF (
         .clk(clk),
         .rst(rst),
         .stall(if_stall),
         .pc_next_in(pc_next),
+        .we(drv_we),
+        .waddr(drv_waddr),
+        .wdata(drv_wdata),
         .instruction_out(if_instruction),
         .pc_current_out(if_pc_current)
     );

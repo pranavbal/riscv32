@@ -9,6 +9,11 @@ module if_stage (
     // PC-next comes from outside IF from EX stage
     input logic [31:0] pc_next_in,
 
+    // driver inputs for instruction memory
+    input logic we,
+    input logic [31:0] waddr,
+    input logic [31:0] wdata,
+
     //outputs going into IF_ID register
     output logic [31:0] instruction_out,
     output logic [31:0] pc_current_out
@@ -25,6 +30,10 @@ module if_stage (
     );
 
     instruction_memory imem (
+        .clk(clk),
+        .we(we),
+        .waddr(waddr),
+        .wdata(wdata),
         .addr(pc_current),
         .instruction(instruction_out)
     );
