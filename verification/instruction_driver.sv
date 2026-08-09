@@ -11,22 +11,22 @@ class instruction_driver;
         ref logic [31:0] instr_list [0:9]
     );
 
-    // hold reset for some cycles
+    // hold reset while loading instructions
     rst = 1'b1;
-    @(posedge clk);
-    @(posedge clk);
-    rst = 1'b0;
+    we = 1'b1;
 
     // load each instruction into instruction_memory
-    we = 1'b1;
     foreach (instr_list[i]) begin
         waddr = i * 4;
         wdata = instr_list[i];
         @(posedge clk);
-
     end
 
     we = 1'b0;
+
+    // release reset after all instructions are loaded
+    rst = 1'b0;
+    @(posedge clk);
     
     endtask
 endclass
