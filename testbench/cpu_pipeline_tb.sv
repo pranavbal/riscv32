@@ -6,7 +6,14 @@ module cpu_pipeline_tb;
 
     cpu_pipeline uut (
         .clk(clk),
-        .rst(rst)
+        .rst(rst),
+        .we(1'b0),
+        .waddr(32'b0),
+        .wdata(32'b0),
+        // allthis is unused so leave unconnected
+        .wb_write_back_addr_out(),
+        .wb_write_back_data_out(),
+        .wb_reg_write_final_out()
     );
 
     initial clk = 0;

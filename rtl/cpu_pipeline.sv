@@ -3,7 +3,13 @@
 
 module cpu_pipeline (
     input logic clk,
-    input logic rst
+    input logic rst,
+    input logic we,
+    input logic [31:0] waddr,
+    input logic [31:0] wdata,
+    output logic [4:0] wb_write_back_addr_out,
+    output logic [31:0] wb_write_back_data_out,
+    output logic        wb_reg_write_final_out
 );
 
     // PC-next mux
@@ -14,24 +20,15 @@ module cpu_pipeline (
     logic [31:0] if_pc_current;
     logic if_stall;
 
-    // driver connections for injecting instructions
-    logic drv_we;
-    logic [31:0] drv_waddr;
-    logic [31:0] drv_wdata;
-
-    // change later once driver is verification is functional
-    assign drv_we = 1'b0;
-    assign drv_waddr = 32'b0;
-    assign drv_wdata = 32'b0;
 
     if_stage IF (
         .clk(clk),
         .rst(rst),
         .stall(if_stall),
         .pc_next_in(pc_next),
-        .we(drv_we),
-        .waddr(drv_waddr),
-        .wdata(drv_wdata),
+        .we(we),
+        .waddr(waddr),
+        .wdata(wdata),
         .instruction_out(if_instruction),
         .pc_current_out(if_pc_current)
     );
@@ -415,6 +412,11 @@ module cpu_pipeline (
     // Write-back loop into ID stage
     assign wb_write_back_addr = memwb_rd_addr;
     assign wb_reg_write_final = memwb_reg_write;
+
+    // expose write-back signals for monitor
+    assign wb_write_back_addr_out = wb_write_back_addr;
+    assign wb_write_back_data_out = wb_write_back_data;
+    assign wb_reg_write_final_out = wb_reg_write_final;
 
 endmodule
 
