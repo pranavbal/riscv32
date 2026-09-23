@@ -231,6 +231,7 @@ class golden_model;
     
         out_rd = rd;
         out_result = result;
+        out_reg_write = reg_write_happened;
     endtask
 
 endclass

@@ -6,11 +6,13 @@ class instruction_agent;
     instruction_sequencer sqr;
     instruction_driver drv;
     instruction_monitor mon;
+    scoreboard sb;
 
     function new();
         sqr = new();
         drv = new();
         mon = new();
+        sb = new();
     endfunction
 
     task run(
@@ -23,10 +25,15 @@ class instruction_agent;
         ref logic [31:0] wb_write_data,
         ref logic wb_reg_write
     );
+        // feed the golden model sequentially
+        // avoids  xSim's ref-in-form limitation
+        while (sb.gm.gm_pc < 40) begin
+            sb.predict(sqr.instr_list[sb.gm.gm_pc >> 2]);
+        end
 
         fork
             drv.run(clk, rst, we, waddr, wdata, sqr.instr_list);
-            mon.run(clk, wb_rd_addr, wb_write_data, wb_reg_write);
+            mon.run(clk, wb_rd_addr, wb_write_data, wb_reg_write, sb);
         join_none
 
     endtask

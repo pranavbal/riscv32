@@ -8,7 +8,8 @@ class instruction_monitor;
         ref logic clk,
         ref logic [4:0] wb_rd_addr,
         ref logic [31:0] wb_write_data,
-        ref logic wb_reg_write
+        ref logic wb_reg_write,
+        scoreboard sb
     );
 
     instruction_transaction tx;
@@ -21,6 +22,7 @@ class instruction_monitor;
             tx.write_data = wb_write_data;
             tx.reg_write = wb_reg_write;
             $display("Monitor observed: rd=x%0d data=%0d", tx.rd_addr, tx.write_data);
+            sb.check(wb_rd_addr, wb_write_data, wb_reg_write);
         end
     end
     endtask
