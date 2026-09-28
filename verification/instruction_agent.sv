@@ -7,12 +7,14 @@ class instruction_agent;
     instruction_driver drv;
     instruction_monitor mon;
     scoreboard sb;
+    functional_coverage fc;
 
     function new();
         sqr = new();
         drv = new();
         mon = new();
         sb = new();
+        fc = new();
     endfunction
 
     task run(
@@ -29,6 +31,7 @@ class instruction_agent;
         // avoids  xSim's ref-in-form limitation
         while (sb.gm.gm_pc < 40) begin
             sb.predict(sqr.instr_list[sb.gm.gm_pc >> 2]);
+            fc.sample(sqr.instr_list[sb.gm.gm_pc >> 2]);
         end
 
         fork

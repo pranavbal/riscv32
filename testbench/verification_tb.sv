@@ -43,6 +43,7 @@ module verification_tb;
         repeat (50) @(posedge clk);
 
         $display("Verification testbench complete.");
+        $display("Instruction coverage: %0.2f%%", agent.fc.instruction_coverage.get_coverage());
         $finish;
     end
 
