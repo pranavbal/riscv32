@@ -16,7 +16,7 @@ class instruction_monitor;
 
     forever begin
         @(posedge clk);
-        if (wb_reg_write) begin
+        if (wb_reg_write && wb_rd_addr != 5'd0) begin
             tx = new();
             tx.rd_addr = wb_rd_addr;
             tx.write_data = wb_write_data;

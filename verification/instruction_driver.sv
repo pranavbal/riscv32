@@ -17,16 +17,17 @@ class instruction_driver;
 
     // load each instruction into instruction_memory
     foreach (instr_list[i]) begin
+        @(negedge clk);
         waddr = i * 4;
         wdata = instr_list[i];
-        @(posedge clk);
     end
 
+    // wait until last instruction is written
+    @(negedge clk);
     we = 1'b0;
 
     // release reset after all instructions are loaded
     rst = 1'b0;
-    @(posedge clk);
     
     endtask
 endclass

@@ -25,10 +25,6 @@ class scoreboard;
         instruction_transaction tx;
 
         gm.execute(instruction, rd_out, result_out, reg_write_out);
-
-        $display("PREDICT DEBUG: instr=%h rd_out=%0d result_out=%0d reg_write_out=%0d queue_size_before=%0d",
-              instruction, rd_out, result_out, reg_write_out, pending_predictions.size());
-
               
         if (reg_write_out) begin
             tx = new();
