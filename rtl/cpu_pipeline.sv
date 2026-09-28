@@ -211,11 +211,12 @@ module cpu_pipeline (
     // --- FORWARDING ---
     logic [31:0] fwd_alu_operand_a;
     logic [31:0] fwd_alu_operand_b;
+    logic [31:0] exmem_fwd_data;
 
     forwarding_unit FU (
         .idex_rs1_data(idex_rs1_data),
         .idex_rs2_data(idex_rs2_data),
-        .exmem_alu_result(exmem_alu_result),
+        .exmem_alu_result(exmem_fwd_data),
         .wb_write_back_data(wb_write_back_data),
         .forward_a(forward_a),
         .forward_b(forward_b),
@@ -350,6 +351,12 @@ module cpu_pipeline (
         .mem_to_reg_out(exmem_mem_to_reg)
         
     );
+
+    // ex/mem forwarding value should match what wb will write:
+    // 11 is LUI, 10 is JAL/JALR (pc+4), else ALU
+    assign exmem_fwd_data = (exmem_mem_to_reg == 2'b11) ? exmem_imm : 
+                            (exmem_mem_to_reg == 2'b10) ? exmem_pc_plus_4 :
+                                                          exmem_alu_result;
 
     //----------------------------------------------------------------
     // mem_stage
