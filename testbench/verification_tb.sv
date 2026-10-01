@@ -39,8 +39,8 @@ module verification_tb;
         agent = new();
         agent.run(clk, rst, we, waddr, wdata, wb_rd_addr, wb_write_data, wb_reg_write);
 
-        // let simulation run long enough for driver load + program execution
-        repeat (50) @(posedge clk);
+        // wait for load cycles + 3 cycles per instruction + buffer
+        repeat (agent.sqr.instr_list.size() + 3 * agent.exec_count + 20) @(posedge clk);
 
         $display("Verification testbench complete.");
         $display("Instruction coverage: %0.2f%%", agent.fc.instruction_coverage.get_coverage());

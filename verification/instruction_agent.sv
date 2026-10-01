@@ -3,11 +3,15 @@
 
 class instruction_agent;
 
+    localparam int unsigned MAX_STEPS = 1000;
+
     instruction_sequencer sqr;
     instruction_driver drv;
     instruction_monitor mon;
     scoreboard sb;
     functional_coverage fc;
+
+    int unsigned exec_count;
 
     function new();
         sqr = new();
@@ -15,6 +19,7 @@ class instruction_agent;
         mon = new();
         sb = new();
         fc = new();
+        exec_count = 0;
     endfunction
 
     task run(
@@ -27,12 +32,19 @@ class instruction_agent;
         ref logic [31:0] wb_write_data,
         ref logic wb_reg_write
     );
+
+        logic [31:0] current_instr;
+
         // feed the golden model sequentially
-        // avoids  xSim's ref-in-form limitation
-        while (sb.gm.gm_pc < 40) begin
-            sb.predict(sqr.instr_list[sb.gm.gm_pc >> 2]);
-            fc.sample(sqr.instr_list[sb.gm.gm_pc >> 2]);
+        while (sb.gm.gm_pc < sqr.instr_list.size() * 4 && exec_count < MAX_STEPS) begin
+            current_instr = sqr.instr_list[sb.gm.gm_pc >> 2];
+            fc.sample(current_instr);
+            sb.predict(current_instr);
+            exec_count++;
         end
+
+        if (exec_count >= MAX_STEPS)
+        $error("Golden model hit MAX_STEPS (%0d) - program may not terminate", MAX_STEPS);
 
         fork
             drv.run(clk, rst, we, waddr, wdata, sqr.instr_list);

@@ -8,7 +8,7 @@ class instruction_driver;
         ref logic we,
         ref logic [31:0] waddr,
         ref logic [31:0] wdata,
-        ref logic [31:0] instr_list [0:9]
+        input logic [31:0] instr_list [$]
     );
 
     // hold reset while loading instructions
