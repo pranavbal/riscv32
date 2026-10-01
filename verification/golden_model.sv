@@ -200,8 +200,9 @@ class golden_model;
         // ----------- JAL ----------
         7'b1101111: begin
             imm = {{11{instruction[31]}}, instruction[31], instruction[19:12], instruction[20], instruction[30:21], 1'b0};
+            result = gm_pc + 32'd4;
             if (rd!= 5'b0) begin
-                gm_registers[rd] = gm_pc + 32'd4;
+                gm_registers[rd] = result;
                 reg_write_happened = 1'b1;
             end
             gm_pc = gm_pc + imm;
@@ -211,8 +212,9 @@ class golden_model;
         7'b1100111: begin
             imm = {{20{instruction[31]}}, instruction[31:20]};
             target = (rs1_val + imm) & ~32'b1;
+            result = gm_pc + 32'd4;
             if (rd != 5'b0) begin
-                gm_registers[rd] = gm_pc + 32'd4;
+                gm_registers[rd] = result;
                 reg_write_happened = 1'b1;
             end
             gm_pc = target;

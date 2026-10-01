@@ -305,7 +305,7 @@ module cpu_pipeline (
     // --- PC-NEXT MUX (THREE LEVELS) ---
     always_comb begin
         if (idex_jump || (idex_branch && (idex_predicted_taken != branch_taken)))
-            pc_next = branch_taken ? ex_branch_target : ex_pc_plus_4;
+            pc_next = (idex_jump || branch_taken) ? ex_branch_target : ex_pc_plus_4;
         else if (predict_taken && btb_valid)
             pc_next = btb_target;
         else

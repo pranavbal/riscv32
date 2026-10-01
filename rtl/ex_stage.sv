@@ -37,6 +37,6 @@ module ex_stage(
     );
 
     assign pc_plus_4_out = pc_current_in + 32'd4;
-    assign branch_target_out = jalr_in ? (rs1_data_in + imm_in) : pc_current_in + imm_in;
+    assign branch_target_out = jalr_in ? ((rs1_data_in + imm_in) & ~32'd1) : pc_current_in + imm_in;
 
 endmodule
