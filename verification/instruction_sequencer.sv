@@ -6,7 +6,7 @@ class instruction_sequencer;
     logic [31:0] instr_list [$];
 
     function new();
-    // JALR BIT-0 TEST (inactive)
+    // JALR BIT-0 TEST (active)
         instr_list.push_back(32'h01100093); // ADDI  x1,x0,17   x1 = 17
         instr_list.push_back(32'h00008167); // JALR  x2,0(x1)   x2 = 8, target = 17 & ~1 = 16
       instr_list.push_back(32'h06300493); // ADDI  x9,x0,99   skipped
@@ -30,7 +30,7 @@ class instruction_sequencer;
       //  instr_list.push_back(32'h06300393); // ADDI x7,x0,99   skipped
      //  instr_list.push_back(32'h04D00413); // ADDI x8,x0,77   x8 = 77
 
-        // LUI
+        // LUI (INACTIVE)
       //  instr_list.push_back(32'h000012B7); // LUI  x5,0x1     x5  = 4096
       //   instr_list.push_back(32'h00128313); // ADDI x6,x5,1    x6  = 4097 (EX/MEM forward from LUI)
       //   instr_list.push_back(32'h00000013); // NOP             no write
@@ -43,6 +43,33 @@ class instruction_sequencer;
       //   instr_list.push_back(32'h00000013); // NOP             no write
     endfunction
 
+    
+    function void load_random(int n, int seed);
+      instruction_transaction tx;
+      logic [4:0] r;
+      instr_list.delete();
+      tx = new();
+      tx.srandom(seed);
+
+    // make the first 8 instructions ADDI to put random value into registers
+    for (int i = 1; i <= 8; i++) begin
+      if (!tx.randomize()) $fatal(1, "randomize failed");
+      r = i;
+      instr_list.push_back({tx.imm12, 5'd0, 3'b000, r, 7'b0010011}); // ADDI xr, x0, imm12
+    end
+    
+    // random instructions
+    repeat (n) begin
+      if (!tx.randomize()) $fatal(1, "randomize failed");
+      instr_list.push_back(tx.to_word());
+    end
+    
+    // print the program
+    $display("Random program, seed%0d, %0d instruction:", seed, instr_list.size());
+    foreach (instr_list[i]) $display(" [%0d] %h", i, instr_list[i]);
+    endfunction
+    
+
     task run();
         instruction_transaction tx;
         foreach (instr_list[i]) begin
@@ -51,6 +78,6 @@ class instruction_sequencer;
             $display("Sequencer generated: instr=%h", tx.instruction);
         end
     endtask
-
+    
 
 endclass
