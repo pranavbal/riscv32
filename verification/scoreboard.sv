@@ -59,6 +59,15 @@ class scoreboard;
             fail_count++;
         end
     endtask
+    task report();
+        if (pending_predictions.size() != 0) begin
+            $display("SCOREBOARD ERROR: %0d predictions never observed", pending_predictions.size());
+            fail_count++;
+        end
+        $display("SCOREBOARD SUMMARY: pass=%0d fail=%0d", pass_count, fail_count);
+        if (fail_count == 0) $display("TEST PASSED");
+        else $display ("TEST FAILED");
+    endtask
 endclass
         
 

@@ -62,8 +62,9 @@ module verification_tb;
         agent.run(clk, rst, we, waddr, wdata, wb_rd_addr, wb_write_data, wb_reg_write);
 
         // wait for load cycles + 3 cycles per instruction + buffer
-        repeat (agent.sqr.instr_list.size() + 3 * agent.exec_count + 20) @(posedge clk);
-
+        repeat ($size(agent.sqr.instr_list) + 3 * agent.exec_count + 20) @(posedge clk);
+        
+        agent.sb.report();
         $display("Verification testbench complete.");
         $display("Instruction coverage: %0.2f%%", agent.fc.instruction_coverage.get_coverage());
         $finish;

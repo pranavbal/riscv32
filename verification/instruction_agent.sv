@@ -43,8 +43,10 @@ class instruction_agent;
             exec_count++;
         end
 
-        if (exec_count >= MAX_STEPS)
-        $error("Golden model hit MAX_STEPS (%0d) - program may not terminate", MAX_STEPS);
+        if (sb.gm.gm_pc < $size(sqr.instr_list) * 4) begin
+            $error("Golden model hit MAX_STEPS (%0d) before reaching end of program", MAX_STEPS);
+        end
+
 
         fork
             drv.run(clk, rst, we, waddr, wdata, sqr.instr_list);
