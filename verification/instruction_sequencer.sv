@@ -1,6 +1,15 @@
 // instruction_sequencer.sv
 // generates a stream of instruction_transaction objections from a fixed instruction list (for now)
 
+
+class kind_picker;
+    rand int unsigned pick;
+    rand int unsigned idx;
+    constraint c_pick { pick < 100; }
+    constraint c_idx  { idx < 60; }
+endclass
+
+
 class instruction_sequencer;
 
     logic [31:0] instr_list [$];
@@ -46,10 +55,16 @@ class instruction_sequencer;
     
     function void load_random(int n, int seed);
       instruction_transaction tx;
+      kind_picker kp;
       logic [4:0] r;
+      instruction_transaction::instr_kind_e k;
+      int pick;
+      bit [2:0] f3;
       instr_list.delete();
       tx = new();
       tx.srandom(seed);
+      kp = new();
+      kp.srandom(seed);
 
     // make the first 8 instructions ADDI to put random value into registers
     for (int i = 1; i <= 8; i++) begin
@@ -60,10 +75,39 @@ class instruction_sequencer;
     
     // random instructions
     repeat (n) begin
-      if (!tx.randomize()) $fatal(1, "randomize failed");
+      if (!kp.randomize()) $fatal(1, "pick randomize failed");
+      pick = kp.pick;
+      if      (pick < 30) k = instruction_transaction::K_R;
+      else if (pick < 50) k = instruction_transaction::K_I;
+      else if (pick < 60) k = instruction_transaction::K_SHIFT;
+      else if (pick < 65) k = instruction_transaction::K_LUI;
+      else if (pick < 70) k = instruction_transaction::K_AUIPC;
+      else if (pick < 90) k = instruction_transaction::K_LOAD;
+      else                k = instruction_transaction::K_STORE;
+
+      if (k == instruction_transaction::K_LOAD) begin
+        case (kp.idx % 5)
+          0: f3 = 3'b000;
+          1: f3 = 3'b001;
+          2: f3 = 3'b010;
+          3: f3 = 3'b100;
+          default: f3 = 3'b101;
+        endcase
+        if (!tx.randomize() with { kind == k; funct3 == f3; }) $fatal(1, "randomize failed");
+      end else if (k == instruction_transaction::K_STORE) begin
+        case (kp.idx % 3)
+          0: f3 = 3'b000;
+          1: f3 = 3'b001;
+          default: f3 = 3'b010;
+        endcase
+        if (!tx.randomize() with { kind == k; funct3 == f3; }) $fatal(1, "randomize failed");
+      end else begin
+        if (!tx.randomize() with { kind == k; }) $fatal(1, "randomize failed");
+      end
+
       instr_list.push_back(tx.to_word());
     end
-    
+
     // print the program
     $display("Random program, seed%0d, %0d instruction:", seed, instr_list.size());
     foreach (instr_list[i]) $display(" [%0d] %h", i, instr_list[i]);
