@@ -11,6 +11,13 @@ module data_memory(
     // 1024 words of 32-bit memory = 4KB
     logic [31:0] mem [0:1023];
 
+    // Start at zero
+    initial begin
+        for (int i = 0; i < 1024; i++) begin
+            mem[i] = 32'b0;
+        end
+    end
+
     // Write - sequential
     always_ff @(posedge clk) begin
         if (we)

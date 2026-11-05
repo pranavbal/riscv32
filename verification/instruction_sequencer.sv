@@ -5,8 +5,10 @@
 class kind_picker;
     rand int unsigned pick;
     rand int unsigned idx;
+    rand int unsigned jmp;
     constraint c_pick { pick < 100; }
     constraint c_idx  { idx < 60; }
+    constraint c_jmp { jmp < 12; }
 endclass
 
 
@@ -60,57 +62,79 @@ class instruction_sequencer;
       instruction_transaction::instr_kind_e k;
       int pick;
       bit [2:0] f3;
+      int total;  
+      int pos;     
+      int maxk;    
+      int bk;      
       instr_list.delete();
       tx = new();
       tx.srandom(seed);
       kp = new();
       kp.srandom(seed);
 
-    // make the first 8 instructions ADDI to put random value into registers
-    for (int i = 1; i <= 8; i++) begin
-      if (!tx.randomize()) $fatal(1, "randomize failed");
-      r = i;
-      instr_list.push_back({tx.imm12, 5'd0, 3'b000, r, 7'b0010011}); // ADDI xr, x0, imm12
-    end
-    
-    // random instructions
-    repeat (n) begin
-      if (!kp.randomize()) $fatal(1, "pick randomize failed");
-      pick = kp.pick;
-      if      (pick < 30) k = instruction_transaction::K_R;
-      else if (pick < 50) k = instruction_transaction::K_I;
-      else if (pick < 60) k = instruction_transaction::K_SHIFT;
-      else if (pick < 65) k = instruction_transaction::K_LUI;
-      else if (pick < 70) k = instruction_transaction::K_AUIPC;
-      else if (pick < 90) k = instruction_transaction::K_LOAD;
-      else                k = instruction_transaction::K_STORE;
+      // make the first 8 instructions ADDI to put random value into registers
+      for (int i = 1; i <= 8; i++) begin
+        if (!tx.randomize()) $fatal(1, "randomize failed");
+        r = i;
+        instr_list.push_back({tx.imm12, 5'd0, 3'b000, r, 7'b0010011}); // ADDI xr, x0, imm12
+      end
+      
+      total = instr_list.size() + n;
 
-      if (k == instruction_transaction::K_LOAD) begin
-        case (kp.idx % 5)
-          0: f3 = 3'b000;
-          1: f3 = 3'b001;
-          2: f3 = 3'b010;
-          3: f3 = 3'b100;
-          default: f3 = 3'b101;
-        endcase
-        if (!tx.randomize() with { kind == k; funct3 == f3; }) $fatal(1, "randomize failed");
-      end else if (k == instruction_transaction::K_STORE) begin
-        case (kp.idx % 3)
-          0: f3 = 3'b000;
-          1: f3 = 3'b001;
-          default: f3 = 3'b010;
-        endcase
-        if (!tx.randomize() with { kind == k; funct3 == f3; }) $fatal(1, "randomize failed");
-      end else begin
-        if (!tx.randomize() with { kind == k; }) $fatal(1, "randomize failed");
+      // random instructions
+      repeat (n) begin
+        if (!kp.randomize()) $fatal(1, "pick randomize failed");
+        pick = kp.pick;
+        if      (pick < 25) k = instruction_transaction::K_R;
+        else if (pick < 40) k = instruction_transaction::K_I;
+        else if (pick < 50) k = instruction_transaction::K_SHIFT;
+        else if (pick < 55) k = instruction_transaction::K_LUI;
+        else if (pick < 60) k = instruction_transaction::K_AUIPC;
+        else if (pick < 75) k = instruction_transaction::K_LOAD;
+        else if (pick < 85) k = instruction_transaction::K_STORE;
+        else                k = instruction_transaction::K_BRANCH;
+
+        if (k == instruction_transaction::K_LOAD) begin
+          case (kp.idx % 5)
+            0: f3 = 3'b000;
+            1: f3 = 3'b001;
+            2: f3 = 3'b010;
+            3: f3 = 3'b100;
+            default: f3 = 3'b101;
+          endcase
+          if (!tx.randomize() with { kind == k; funct3 == f3; }) $fatal(1, "randomize failed");
+
+        end else if (k == instruction_transaction::K_STORE) begin
+          case (kp.idx % 3)
+            0: f3 = 3'b000;
+            1: f3 = 3'b001;
+            default: f3 = 3'b010;
+          endcase
+          if (!tx.randomize() with { kind == k; funct3 == f3; }) $fatal(1, "randomize failed");
+        end else if (k == instruction_transaction::K_BRANCH) begin
+          case (kp.idx % 6)
+            0: f3 = 3'b000;   // BEQ
+            1: f3 = 3'b001;   // BNE
+            2: f3 = 3'b100;   // BLT
+            3: f3 = 3'b101;   // BGE
+            4: f3 = 3'b110;   // BLTU
+            default: f3 = 3'b111;   // BGEU
+          endcase
+          pos  = instr_list.size();
+          maxk = total - pos;
+          if (maxk > 4) maxk = 4;
+          bk = (kp.jmp % maxk) + 1;
+          if (!tx.randomize() with { kind == k; funct3 == f3; boff == bk * 4; }) $fatal(1, "randomize failed");
+        end else begin
+          if (!tx.randomize() with { kind == k; }) $fatal(1, "randomize failed");
+        end
+
+        instr_list.push_back(tx.to_word());
       end
 
-      instr_list.push_back(tx.to_word());
-    end
-
-    // print the program
-    $display("Random program, seed%0d, %0d instruction:", seed, instr_list.size());
-    foreach (instr_list[i]) $display(" [%0d] %h", i, instr_list[i]);
+      // print the program
+      $display("Random program, seed%0d, %0d instruction:", seed, instr_list.size());
+      foreach (instr_list[i]) $display(" [%0d] %h", i, instr_list[i]);
     endfunction
     
 

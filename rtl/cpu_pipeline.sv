@@ -14,6 +14,7 @@ module cpu_pipeline (
 
     // PC-next mux
     logic [31:0] pc_next;
+    logic pred_used;
     //----------------------------------------------------------------
     // if_stage
     logic [31:0] if_instruction;
@@ -49,7 +50,7 @@ module cpu_pipeline (
         .pc_current_in(if_pc_current),
         .instruction_out(ifid_instruction),
         .pc_current_out(ifid_pc_current),
-        .predicted_taken_in(predict_taken),
+        .predicted_taken_in(pred_used),
         .predicted_taken_out(ifid_predicted_taken)
     
     );
@@ -301,6 +302,8 @@ module cpu_pipeline (
         .update_target(ex_branch_target)
 
     );
+
+    assign pred_used = predict_taken && btb_valid;
 
     // --- PC-NEXT MUX (THREE LEVELS) ---
     always_comb begin

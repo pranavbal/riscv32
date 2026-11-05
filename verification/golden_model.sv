@@ -9,6 +9,9 @@ class golden_model;
      foreach (gm_registers[i]) begin
         gm_registers[i] = 32'b0;
      end
+     foreach (gm_memory[i]) begin
+        gm_memory[i] = 32'b0;
+     end
      gm_pc = 32'b0;
     endfunction
 

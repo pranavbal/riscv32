@@ -19,11 +19,12 @@ module branch_target_buffer (
 
     logic [31:0] target_table [0:63];
     logic valid_table [0:63];
+    logic [23:0] tag_table [0:63];   // upper PC bits of the branch stored in each entry
 
     integer i;
 
     assign btb_target = target_table[lookup_pc[7:2]];
-    assign btb_valid = valid_table[lookup_pc[7:2]];
+    assign btb_valid = valid_table[lookup_pc[7:2]] && (tag_table[lookup_pc[7:2]] == lookup_pc[31:8]);
 
     always_ff @(posedge clk) begin
         if (rst) begin
@@ -32,6 +33,7 @@ module branch_target_buffer (
         end else if (update_valid) begin
             target_table[update_pc[7:2]] <= update_target;
             valid_table[update_pc[7:2]] <= 1'b1;
+            tag_table[update_pc[7:2]] <= update_pc[31:8];
         end
     end
 endmodule 

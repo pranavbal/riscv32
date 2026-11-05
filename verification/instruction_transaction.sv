@@ -14,7 +14,7 @@ class instruction_transaction;
 
     // ------ random instruction generation-----------------
 
-    typedef enum {K_R, K_I, K_SHIFT, K_LUI, K_AUIPC, K_LOAD, K_STORE} instr_kind_e;
+    typedef enum {K_R, K_I, K_SHIFT, K_LUI, K_AUIPC, K_LOAD, K_STORE, K_BRANCH} instr_kind_e;
 
     rand instr_kind_e kind;
     rand bit [2:0] funct3;
@@ -23,6 +23,7 @@ class instruction_transaction;
     rand bit [11:0] imm12;
     rand bit [4:0] shamt;
     rand bit [19:0] imm20;
+    rand bit [12:0] boff;
 
     // to make sure instructions depend on each other, only using 8 registers
     constraint c_regs { 
@@ -63,6 +64,14 @@ class instruction_transaction;
         (kind == K_LOAD || kind == K_STORE) -> (funct3[1:0] == 2'b01) -> imm12[0] == 1'b0;
     }
 
+    constraint c_branch {
+        (kind == K_BRANCH) -> funct3 inside {3'b000, 3'b001, 3'b100, 3'b101, 3'b110, 3'b111};
+        (kind == K_BRANCH) -> alt == 0;
+        (kind == K_BRANCH) -> boff inside {[4:16]};
+        (kind == K_BRANCH) -> boff[1:0] == 2'b00;
+    }
+
+
     constraint c_order { solve kind before funct3, alt; solve funct3 before imm12; }
     
     // pack random fields into 32-bit instruction word
@@ -77,6 +86,7 @@ class instruction_transaction;
         K_SHIFT: to_word = {f7, shamt, rs1, funct3, rd, 7'b0010011};
         K_LUI: to_word = {imm20, rd, 7'b0110111};
         K_AUIPC: to_word = {imm20, rd, 7'b0010111};
+        K_BRANCH: to_word = {boff[12], boff[10:5], rs2, rs1, funct3, boff[4:1], boff[11], 7'b1100011};
         default: to_word = 32'h00000013;
         endcase
     endfunction
