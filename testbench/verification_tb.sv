@@ -39,7 +39,7 @@ module verification_tb;
 
     initial begin
         agent = new();
-        agent.sqr.load_random(100, 1); // 10 random instructions with different seeds
+        agent.sqr.load_random(200, 1); // 10 random instructions with different seeds
         
         // counters for each instruction kind
 
