@@ -65,8 +65,13 @@ class instruction_sequencer;
       int total;  
       int pos;     
       int maxk;    
-      int bk;      
+      int bk;     
+      instruction_transaction::instr_kind_e k2;
+      bit [4:0] rt;
+      int off;
+      bit is_tgt [0:4095]; 
       instr_list.delete();
+      foreach (is_tgt[i]) is_tgt[i] = 1'b0;
       tx = new();
       tx.srandom(seed);
       kp = new();
@@ -82,7 +87,7 @@ class instruction_sequencer;
       total = instr_list.size() + n;
 
       // random instructions
-      repeat (n) begin
+      while (instr_list.size() < total) begin
         if (!kp.randomize()) $fatal(1, "pick randomize failed");
         pick = kp.pick;
         if      (pick < 25) k = instruction_transaction::K_R;
@@ -92,7 +97,14 @@ class instruction_sequencer;
         else if (pick < 60) k = instruction_transaction::K_AUIPC;
         else if (pick < 75) k = instruction_transaction::K_LOAD;
         else if (pick < 85) k = instruction_transaction::K_STORE;
-        else                k = instruction_transaction::K_BRANCH;
+        else if (pick < 92) k = instruction_transaction::K_BRANCH;
+        else if (pick < 96) k = instruction_transaction::K_JAL;
+        else                k = instruction_transaction::K_JALR;
+
+        if (k == instruction_transaction::K_JALR) begin
+          pos = instr_list.size();
+          if ((total - pos < 2) || is_tgt[pos + 1]) k = instruction_transaction::K_JAL;
+        end
 
         if (k == instruction_transaction::K_LOAD) begin
           case (kp.idx % 5)
@@ -103,6 +115,8 @@ class instruction_sequencer;
             default: f3 = 3'b101;
           endcase
           if (!tx.randomize() with { kind == k; funct3 == f3; }) $fatal(1, "randomize failed");
+        
+
 
         end else if (k == instruction_transaction::K_STORE) begin
           case (kp.idx % 3)
@@ -124,7 +138,28 @@ class instruction_sequencer;
           maxk = total - pos;
           if (maxk > 4) maxk = 4;
           bk = (kp.jmp % maxk) + 1;
+          is_tgt[pos + bk] = 1'b1;
           if (!tx.randomize() with { kind == k; funct3 == f3; boff == bk * 4; }) $fatal(1, "randomize failed");
+        end else if (k == instruction_transaction::K_JAL) begin
+          pos  = instr_list.size();
+          maxk = total - pos;
+          if (maxk > 4) maxk = 4;
+          bk = (kp.jmp % maxk) + 1;
+          is_tgt[pos + bk] = 1'b1;
+          if (!tx.randomize() with { kind == k; boff == bk * 4; }) $fatal(1, "randomize failed");
+        end else if (k == instruction_transaction::K_JALR) begin
+          rt = (kp.idx % 8) + 1;
+          k2 = instruction_transaction::K_AUIPC;
+          if (!tx.randomize() with { kind == k2; rd == rt; imm20 == 0; }) $fatal(1, "randomize failed");
+          instr_list.push_back(tx.to_word());
+          pos  = instr_list.size();
+          maxk = total - pos;
+          if (maxk > 4) maxk = 4;
+          bk = (kp.jmp % maxk) + 1;
+          is_tgt[pos + bk] = 1'b1;
+          off = (bk + 1) * 4 + (pick % 2);
+          k2 = instruction_transaction::K_JALR;
+          if (!tx.randomize() with { kind == k2; rs1 == rt; imm12 == off; }) $fatal(1, "randomize failed");
         end else begin
           if (!tx.randomize() with { kind == k; }) $fatal(1, "randomize failed");
         end

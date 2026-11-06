@@ -14,7 +14,7 @@ class instruction_transaction;
 
     // ------ random instruction generation-----------------
 
-    typedef enum {K_R, K_I, K_SHIFT, K_LUI, K_AUIPC, K_LOAD, K_STORE, K_BRANCH} instr_kind_e;
+    typedef enum {K_R, K_I, K_SHIFT, K_LUI, K_AUIPC, K_LOAD, K_STORE, K_BRANCH, K_JAL, K_JALR } instr_kind_e;
 
     rand instr_kind_e kind;
     rand bit [2:0] funct3;
@@ -87,6 +87,8 @@ class instruction_transaction;
         K_LUI: to_word = {imm20, rd, 7'b0110111};
         K_AUIPC: to_word = {imm20, rd, 7'b0010111};
         K_BRANCH: to_word = {boff[12], boff[10:5], rs2, rs1, funct3, boff[4:1], boff[11], 7'b1100011};
+        K_JAL:  to_word = {1'b0, boff[10:1], boff[11], 8'b0, rd, 7'b1101111};
+        K_JALR: to_word = {imm12, rs1, 3'b000, rd, 7'b1100111};
         default: to_word = 32'h00000013;
         endcase
     endfunction
