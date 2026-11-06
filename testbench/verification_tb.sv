@@ -38,8 +38,13 @@ module verification_tb;
     instruction_agent agent;
 
     initial begin
+        int seed;
+        int num;
+        if (!$value$plusargs("SEED=%d", seed)) seed = 1;
+        if (!$value$plusargs("N=%d", num)) num = 100;
+        $display("REGRESS seed=%0d n=%0d", seed, num);
         agent = new();
-        agent.sqr.load_random(200, 1); // 10 random instructions with different seeds
+        agent.sqr.load_random(num, seed);
         
         // counters for each instruction kind
 
