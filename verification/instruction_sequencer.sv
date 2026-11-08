@@ -70,6 +70,7 @@ class instruction_sequencer;
       bit [4:0] rt;
       int off;
       bit is_tgt [0:4095]; 
+      bit [11:0] bv; 
       instr_list.delete();
       foreach (is_tgt[i]) is_tgt[i] = 1'b0;
       tx = new();
@@ -90,7 +91,8 @@ class instruction_sequencer;
       while (instr_list.size() < total) begin
         if (!kp.randomize()) $fatal(1, "pick randomize failed");
         pick = kp.pick;
-        if      (pick < 25) k = instruction_transaction::K_R;
+        if (pick < 3)  k = instruction_transaction::K_MISC;
+        else if (pick < 25) k = instruction_transaction::K_R;
         else if (pick < 40) k = instruction_transaction::K_I;
         else if (pick < 50) k = instruction_transaction::K_SHIFT;
         else if (pick < 55) k = instruction_transaction::K_LUI;
@@ -99,7 +101,7 @@ class instruction_sequencer;
         else if (pick < 85) k = instruction_transaction::K_STORE;
         else if (pick < 92) k = instruction_transaction::K_BRANCH;
         else if (pick < 96) k = instruction_transaction::K_JAL;
-        else                k = instruction_transaction::K_JALR;
+        else k = instruction_transaction::K_JALR;
 
         if (k == instruction_transaction::K_JALR) begin
           pos = instr_list.size();
@@ -115,6 +117,15 @@ class instruction_sequencer;
             default: f3 = 3'b101;
           endcase
           if (!tx.randomize() with { kind == k; funct3 == f3; }) $fatal(1, "randomize failed");
+
+          pos = instr_list.size();
+          if ((kp.jmp % 2 == 1) && (total - pos >= 2) && !is_tgt[pos + 1]) begin
+            rt = (kp.pick % 8) + 1;                                      // base register x1..x8
+            bv = (kp.idx % 17) * 4;                                      // base value 0..64, multiple of 4
+            instr_list.push_back({bv, 5'd0, 3'b000, rt, 7'b0010011});    // ADDI rt, x0, bv
+            tx.rs1   = rt;                                               // load now uses rt as base
+            tx.imm12 = tx.imm12 - bv;                                    // offset = target - base (often negative)
+          end
         
 
 
@@ -125,6 +136,16 @@ class instruction_sequencer;
             default: f3 = 3'b010;
           endcase
           if (!tx.randomize() with { kind == k; funct3 == f3; }) $fatal(1, "randomize failed");
+
+          pos = instr_list.size();
+          if ((kp.jmp % 2 == 1) && (total - pos >= 2) && !is_tgt[pos + 1]) begin
+            rt = (kp.pick % 8) + 1;                                      // base register x1..x8
+            bv = (kp.idx % 17) * 4;                                      // base value 0..64, multiple of 4
+            instr_list.push_back({bv, 5'd0, 3'b000, rt, 7'b0010011});    // ADDI rt, x0, bv
+            tx.rs1   = rt;                                               // store now uses rt as base
+            tx.imm12 = tx.imm12 - bv;                                    // offset = target - base (often negative)
+          end
+
         end else if (k == instruction_transaction::K_BRANCH) begin
           case (kp.idx % 6)
             0: f3 = 3'b000;   // BEQ

@@ -40,6 +40,7 @@ module verification_tb;
     initial begin
         int seed;
         int num;
+        int mem_mismatch;
         if (!$value$plusargs("SEED=%d", seed)) seed = 1;
         if (!$value$plusargs("N=%d", num)) num = 100;
         $display("REGRESS seed=%0d n=%0d", seed, num);
@@ -73,6 +74,17 @@ module verification_tb;
 
         // wait for load cycles + 3 cycles per instruction + buffer
         repeat ($size(agent.sqr.instr_list) + 3 * agent.exec_count + 20) @(posedge clk);
+        
+        mem_mismatch = 0;
+        for (int i = 0; i < 1024; i++) begin
+            if (uut.MEM.dmem.mem[i] !== agent.sb.gm.gm_memory[i]) begin
+                $display("MEMORY MISMATCH: word %0d (addr 0x%0h) DUT=%h golden=%h", i, i*4, uut.MEM.dmem.mem[i], agent.sb.gm.gm_memory[i]);
+                mem_mismatch++;
+            end
+        end
+        if (mem_mismatch == 0) $display("MEMORY CHECK PASSED");
+        else $display("MEMORY CHECK FAILED: %0d words differ", mem_mismatch);
+        agent.sb.fail_count += mem_mismatch;
         
         agent.sb.report();
         $display("Verification testbench complete.");
