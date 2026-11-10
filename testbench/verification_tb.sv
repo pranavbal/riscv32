@@ -42,10 +42,13 @@ module verification_tb;
         int num;
         int mem_mismatch;
         if (!$value$plusargs("SEED=%d", seed)) seed = 1;
-        if (!$value$plusargs("N=%d", num)) num = 100;
+        if (!$value$plusargs("N=%d", num)) num = 300;
         $display("REGRESS seed=%0d n=%0d", seed, num);
         agent = new();
         agent.sqr.load_random(num, seed);
+        foreach (agent.sqr.instr_list[i])
+            if (agent.sqr.instr_list[i][6:0] == 7'b1100011)
+                $display("BRANCH [%0d] funct3=%b", i, agent.sqr.instr_list[i][14:12]);
         
         // counters for each instruction kind
 
@@ -89,6 +92,8 @@ module verification_tb;
         agent.sb.report();
         $display("Verification testbench complete.");
         $display("Instruction coverage: %0.2f%%", agent.fc.instruction_coverage.get_coverage());
+        $display("Detail coverage: %0.2f%%", agent.fc.detail_coverage.get_coverage());
+        agent.fc.report_detail();
         $finish;
     end
 

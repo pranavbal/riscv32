@@ -71,8 +71,17 @@ class instruction_sequencer;
       int off;
       bit is_tgt [0:4095]; 
       bit [11:0] bv; 
+      bit alt_v;
+      int br_cnt;
+      int i_cnt;
+      int sh_cnt;
+      bit in_shadow [0:4095];
       instr_list.delete();
+      br_cnt = 0;
+      i_cnt  = 0;
+      sh_cnt = 0;
       foreach (is_tgt[i]) is_tgt[i] = 1'b0;
+      foreach (in_shadow[i]) in_shadow[i] = 1'b0;
       tx = new();
       tx.srandom(seed);
       kp = new();
@@ -147,7 +156,7 @@ class instruction_sequencer;
           end
 
         end else if (k == instruction_transaction::K_BRANCH) begin
-          case (kp.idx % 6)
+          case (br_cnt % 6)
             0: f3 = 3'b000;   // BEQ
             1: f3 = 3'b001;   // BNE
             2: f3 = 3'b100;   // BLT
@@ -155,11 +164,14 @@ class instruction_sequencer;
             4: f3 = 3'b110;   // BLTU
             default: f3 = 3'b111;   // BGEU
           endcase
+          if (!in_shadow[instr_list.size()]) br_cnt++;
+
           pos  = instr_list.size();
           maxk = total - pos;
           if (maxk > 4) maxk = 4;
           bk = (kp.jmp % maxk) + 1;
           is_tgt[pos + bk] = 1'b1;
+          for (int s = pos + 1; s < pos + bk; s++) in_shadow[s] = 1'b1;
           if (!tx.randomize() with { kind == k; funct3 == f3; boff == bk * 4; }) $fatal(1, "randomize failed");
         end else if (k == instruction_transaction::K_JAL) begin
           pos  = instr_list.size();
@@ -167,6 +179,7 @@ class instruction_sequencer;
           if (maxk > 4) maxk = 4;
           bk = (kp.jmp % maxk) + 1;
           is_tgt[pos + bk] = 1'b1;
+          for (int s = pos + 1; s < pos + bk; s++) in_shadow[s] = 1'b1;
           if (!tx.randomize() with { kind == k; boff == bk * 4; }) $fatal(1, "randomize failed");
         end else if (k == instruction_transaction::K_JALR) begin
           rt = (kp.idx % 8) + 1;
@@ -178,9 +191,50 @@ class instruction_sequencer;
           if (maxk > 4) maxk = 4;
           bk = (kp.jmp % maxk) + 1;
           is_tgt[pos + bk] = 1'b1;
+          for (int s = pos + 1; s < pos + bk; s++) in_shadow[s] = 1'b1;
           off = (bk + 1) * 4 + (pick % 2);
           k2 = instruction_transaction::K_JALR;
           if (!tx.randomize() with { kind == k2; rs1 == rt; imm12 == off; }) $fatal(1, "randomize failed");
+        end else if (k == instruction_transaction::K_R) begin
+          case (kp.idx % 10)
+            0: begin f3 = 3'b000; alt_v = 1'b0; end   // ADD
+            1: begin f3 = 3'b000; alt_v = 1'b1; end   // SUB
+            2: begin f3 = 3'b001; alt_v = 1'b0; end   // SLL
+            3: begin f3 = 3'b010; alt_v = 1'b0; end   // SLT
+            4: begin f3 = 3'b011; alt_v = 1'b0; end   // SLTU
+            5: begin f3 = 3'b100; alt_v = 1'b0; end   // XOR
+            6: begin f3 = 3'b101; alt_v = 1'b0; end   // SRL
+            7: begin f3 = 3'b101; alt_v = 1'b1; end   // SRA
+            8: begin f3 = 3'b110; alt_v = 1'b0; end   // OR
+            default: begin f3 = 3'b111; alt_v = 1'b0; end   // AND
+          endcase
+          if (!tx.randomize() with { kind == k; funct3 == f3; alt == alt_v; }) $fatal(1, "randomize failed");
+        end else if (k == instruction_transaction::K_MISC) begin
+          case (kp.idx % 3)
+            0: f3 = 3'b000;   // FENCE
+            1: f3 = 3'b001;   // ECALL
+            default: f3 = 3'b010;   // EBREAK
+          endcase
+          if (!tx.randomize() with { kind == k; funct3 == f3; }) $fatal(1, "randomize failed");
+        end else if (k == instruction_transaction::K_I) begin
+          case (i_cnt % 6)
+            0: f3 = 3'b000;   // ADDI
+            1: f3 = 3'b010;   // SLTI
+            2: f3 = 3'b011;   // SLTIU
+            3: f3 = 3'b100;   // XORI
+            4: f3 = 3'b110;   // ORI
+            default: f3 = 3'b111;   // ANDI
+          endcase
+          if (!in_shadow[instr_list.size()]) i_cnt++;
+          if (!tx.randomize() with { kind == k; funct3 == f3; }) $fatal(1, "randomize failed");
+        end else if (k == instruction_transaction::K_SHIFT) begin
+          case (sh_cnt % 3)
+            0: begin f3 = 3'b001; alt_v = 1'b0; end   // SLLI
+            1: begin f3 = 3'b101; alt_v = 1'b0; end   // SRLI
+            default: begin f3 = 3'b101; alt_v = 1'b1; end   // SRAI
+          endcase
+          if (!in_shadow[instr_list.size()]) sh_cnt++;
+          if (!tx.randomize() with { kind == k; funct3 == f3; alt == alt_v; }) $fatal(1, "randomize failed");  
         end else begin
           if (!tx.randomize() with { kind == k; }) $fatal(1, "randomize failed");
         end
