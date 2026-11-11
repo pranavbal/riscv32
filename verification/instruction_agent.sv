@@ -12,6 +12,7 @@ class instruction_agent;
     functional_coverage fc;
 
     int unsigned exec_count;
+    logic [31:0] load_list [$];
 
     function new();
         sqr = new();
@@ -34,12 +35,14 @@ class instruction_agent;
     );
 
         logic [31:0] current_instr;
+        logic [31:0] pc_before;
 
         // feed the golden model sequentially
         while (sb.gm.gm_pc < sqr.instr_list.size() * 4 && exec_count < MAX_STEPS) begin
             current_instr = sqr.instr_list[sb.gm.gm_pc >> 2];
-            fc.sample(current_instr);
-            sb.predict(current_instr);
+            pc_before = sb.gm.gm_pc;                              // PC before this instruction runs
+            sb.predict(current_instr);                            // golden model runs it, moves gm_pc
+            fc.sample(current_instr, sb.gm.gm_pc != pc_before + 4); // taken = PC didn't go to next instruction
             exec_count++;
         end
 
@@ -47,9 +50,11 @@ class instruction_agent;
             $error("Golden model hit MAX_STEPS (%0d) before reaching end of program", MAX_STEPS);
         end
 
+        load_list = sqr.instr_list;
+        while (load_list.size() < 16) load_list.push_back(32'h00000013);
 
         fork
-            drv.run(clk, rst, we, waddr, wdata, sqr.instr_list);
+            drv.run(clk, rst, we, waddr, wdata, load_list);
             mon.run(clk, wb_rd_addr, wb_write_data, wb_reg_write, sb);
         join_none
 

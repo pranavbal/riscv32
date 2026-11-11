@@ -35,17 +35,28 @@ module verification_tb;
         .wb_reg_write_final_out(wb_reg_write)
     );
 
+    always @(negedge clk) begin
+        if (dcov != null)
+            dcov.sample(uut.forward_a, uut.forward_b, uut.lu_stall, uut.ch_flush,
+                        uut.idex_branch, uut.idex_jump, uut.idex_predicted_taken, uut.branch_taken);
+    end
+
     instruction_agent agent;
+    dut_coverage dcov;
 
     initial begin
         int seed;
         int num;
         int mem_mismatch;
+        int test;
         if (!$value$plusargs("SEED=%d", seed)) seed = 1;
         if (!$value$plusargs("N=%d", num)) num = 300;
+        if (!$value$plusargs("TEST=%d", test)) test = 0;
         $display("REGRESS seed=%0d n=%0d", seed, num);
         agent = new();
-        agent.sqr.load_random(num, seed);
+        dcov = new();
+        if (test != 0) agent.sqr.load_directed(test);
+        else agent.sqr.load_random(num, seed);
         foreach (agent.sqr.instr_list[i])
             if (agent.sqr.instr_list[i][6:0] == 7'b1100011)
                 $display("BRANCH [%0d] funct3=%b", i, agent.sqr.instr_list[i][14:12]);
@@ -76,7 +87,7 @@ module verification_tb;
         agent.run(clk, rst, we, waddr, wdata, wb_rd_addr, wb_write_data, wb_reg_write);
 
         // wait for load cycles + 3 cycles per instruction + buffer
-        repeat ($size(agent.sqr.instr_list) + 3 * agent.exec_count + 20) @(posedge clk);
+        repeat ($size(agent.load_list) + 3 * agent.exec_count + 20) @(posedge clk);
         
         mem_mismatch = 0;
         for (int i = 0; i < 1024; i++) begin
@@ -94,6 +105,8 @@ module verification_tb;
         $display("Instruction coverage: %0.2f%%", agent.fc.instruction_coverage.get_coverage());
         $display("Detail coverage: %0.2f%%", agent.fc.detail_coverage.get_coverage());
         agent.fc.report_detail();
+        $display("DUT coverage: %0.2f%%", dcov.dut_cg.get_coverage());
+        dcov.report();
         $finish;
     end
 

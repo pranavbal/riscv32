@@ -11,6 +11,7 @@ class functional_coverage;
     logic        current_rs1_zero;  // base/source register is x0
     logic        current_rd_zero;   // destination is x0
     logic        current_bit20;     // JALR offset bit 0
+    logic        current_taken;
 
     // one bin per opcode
     covergroup instruction_coverage;
@@ -76,6 +77,13 @@ class functional_coverage;
             bins bltu = {3'b110};
             bins bgeu = {3'b111};
         }
+
+        cp_br_dir: coverpoint current_taken iff (current_opcode == 7'b1100011) {
+            bins not_taken = {1'b0};
+            bins taken     = {1'b1};
+        }
+        x_br: cross cp_branch_op, cp_br_dir;
+
         // loads/stores: x0 base vs register base, positive vs negative offset
         cp_mem_base: coverpoint current_rs1_zero iff (current_opcode == 7'b0000011 || current_opcode == 7'b0100011) {
             bins x0_base  = {1'b1};
@@ -116,7 +124,7 @@ class functional_coverage;
         detail_coverage = new();
     endfunction
 
-    function void sample(logic [31:0] instruction);
+    function void sample(logic [31:0] instruction, logic taken);
         current_instr    = instruction;
         current_opcode   = instruction[6:0];
         current_funct3   = instruction[14:12];
@@ -125,6 +133,7 @@ class functional_coverage;
         current_rs1_zero = (instruction[19:15] == 5'b0);
         current_rd_zero  = (instruction[11:7] == 5'b0);
         current_bit20    = instruction[20];
+        current_taken    = taken;
         instruction_coverage.sample();
         detail_coverage.sample();
     endfunction
@@ -144,6 +153,93 @@ class functional_coverage;
         $display("  cp_jalr_bit0  %0.1f%%", detail_coverage.cp_jalr_bit0.get_coverage());
         $display("  cp_misc       %0.1f%%", detail_coverage.cp_misc.get_coverage());
         $display("  cp_rd0        %0.1f%%", detail_coverage.cp_rd0.get_coverage());
+        $display("  cp_br_dir     %0.1f%%", detail_coverage.cp_br_dir.get_coverage());
+        $display("  x_br          %0.1f%%", detail_coverage.x_br.get_coverage());
+    endfunction
+
+endclass
+
+
+// 
+class dut_coverage;
+
+    logic [1:0] cur_fwd_a;
+    logic [1:0] cur_fwd_b;
+    logic       cur_lu_stall;
+    logic       cur_flush;
+    logic       cur_idex_branch;
+    logic       cur_idex_jump;
+    logic       cur_pred_taken;
+    logic       cur_branch_taken;
+
+    covergroup dut_cg;
+        // forwarding source for each ALU operand (00 = none)
+        cp_fwd_a: coverpoint cur_fwd_a {
+            bins none   = {2'b00};
+            bins sel_01 = {2'b01};
+            bins sel_10 = {2'b10};
+        }
+        cp_fwd_b: coverpoint cur_fwd_b {
+            bins none   = {2'b00};
+            bins sel_01 = {2'b01};
+            bins sel_10 = {2'b10};
+        }
+        // load-use stall happened / did not
+        cp_lu_stall: coverpoint cur_lu_stall {
+            bins no_stall = {1'b0};
+            bins stall    = {1'b1};
+        }
+        // pipeline flush happened / did not
+        cp_flush: coverpoint cur_flush {
+            bins no_flush = {1'b0};
+            bins flush    = {1'b1};
+        }
+        // what caused the flush: a branch or a jump
+        cp_flush_cause: coverpoint {cur_idex_jump, cur_idex_branch} iff (cur_flush) {
+            bins by_branch = {2'b01};
+            bins by_jump   = {2'b10};
+        }
+        // branch prediction vs actual: {predicted, actual}
+        cp_pred: coverpoint {cur_pred_taken, cur_branch_taken} iff (cur_idex_branch) {
+            bins pred_nt_actual_nt = {2'b00};   // correct
+            bins pred_nt_actual_t  = {2'b01};   // mispredict
+            bins pred_t_actual_nt  = {2'b10};   // mispredict
+            bins pred_t_actual_t   = {2'b11};   // correct
+        }
+    endgroup
+
+    function new();
+        dut_cg = new();
+    endfunction
+
+    function void sample(
+        logic [1:0] fwd_a,
+        logic [1:0] fwd_b,
+        logic lu_stall,
+        logic flush,
+        logic idex_branch,
+        logic idex_jump,
+        logic pred_taken,
+        logic branch_taken
+    );
+        cur_fwd_a        = fwd_a;
+        cur_fwd_b        = fwd_b;
+        cur_lu_stall     = lu_stall;
+        cur_flush        = flush;
+        cur_idex_branch  = idex_branch;
+        cur_idex_jump    = idex_jump;
+        cur_pred_taken   = pred_taken;
+        cur_branch_taken = branch_taken;
+        dut_cg.sample();
+    endfunction
+
+    function void report();
+        $display("  cp_fwd_a        %0.1f%%", dut_cg.cp_fwd_a.get_coverage());
+        $display("  cp_fwd_b        %0.1f%%", dut_cg.cp_fwd_b.get_coverage());
+        $display("  cp_lu_stall     %0.1f%%", dut_cg.cp_lu_stall.get_coverage());
+        $display("  cp_flush        %0.1f%%", dut_cg.cp_flush.get_coverage());
+        $display("  cp_flush_cause  %0.1f%%", dut_cg.cp_flush_cause.get_coverage());
+        $display("  cp_pred         %0.1f%%", dut_cg.cp_pred.get_coverage());
     endfunction
 
 endclass
