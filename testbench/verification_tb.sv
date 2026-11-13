@@ -57,9 +57,6 @@ module verification_tb;
         dcov = new();
         if (test != 0) agent.sqr.load_directed(test);
         else agent.sqr.load_random(num, seed);
-        foreach (agent.sqr.instr_list[i])
-            if (agent.sqr.instr_list[i][6:0] == 7'b1100011)
-                $display("BRANCH [%0d] funct3=%b", i, agent.sqr.instr_list[i][14:12]);
         
         // counters for each instruction kind
 

@@ -1,7 +1,7 @@
 catch {close_sim}
 set seeds {}
-for {set i 1} {$i <= 50} {incr i} {lappend seeds $i}
-set n 100
+for {set i 1} {$i <= 100} {incr i} {lappend seeds $i}
+set n 300
 set projdir [get_property DIRECTORY [current_project]]
 set simlog  [file join $projdir [current_project].sim sim_1 behav xsim simulate.log]
 set outfile [file join $projdir regress_results.txt]
@@ -39,4 +39,5 @@ if {[llength $bad] > 0} {
     puts $out "FAILED SEEDS: $bad"
 }
 close $out
+set_property -name {xsim.simulate.xsim.more_options} -value {} -objects [get_filesets sim_1]
 puts "done, results in $outfile"
