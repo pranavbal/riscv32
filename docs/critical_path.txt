@@ -1,0 +1,94 @@
+Copyright 1986-2022 Xilinx, Inc. All Rights Reserved. Copyright 2022-2025 Advanced Micro Devices, Inc. All Rights Reserved.
+---------------------------------------------------------------------------------------------------------------------------------------------
+| Tool Version : Vivado v.2025.2 (win64) Build 6299465 Fri Nov 14 19:35:11 GMT 2025
+| Date         : Sat Nov 14 16:35:39 2026
+| Host         : O14 running 64-bit major release  (build 9200)
+| Command      : report_timing -max_paths 1 -path_type full -file C:/Users/prana/Desktop/PROJECT1/docs/critical_path.txt
+| Design       : cpu_pipeline
+| Device       : 7a100t-csg324
+| Speed File   : -1  PRODUCTION 1.23 2018-06-13
+| Design State : Routed
+---------------------------------------------------------------------------------------------------------------------------------------------
+
+Timing Report
+
+Slack (MET) :             0.775ns  (required time - arrival time)
+  Source:                 MEM_WB/rd_addr_out_reg[2]/C
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@7.500ns period=15.000ns})
+  Destination:            ID_EX/rs1_data_out_reg[13]/R
+                            (rising edge-triggered cell FDRE clocked by clk  {rise@0.000ns fall@7.500ns period=15.000ns})
+  Path Group:             clk
+  Path Type:              Setup (Max at Slow Process Corner)
+  Requirement:            15.000ns  (clk rise@15.000ns - clk rise@0.000ns)
+  Data Path Delay:        13.712ns  (logic 3.595ns (26.218%)  route 10.117ns (73.782%))
+  Logic Levels:           16  (CARRY4=2 LUT2=2 LUT3=1 LUT4=1 LUT5=1 LUT6=8 MUXF7=1)
+  Clock Path Skew:        -0.049ns (DCD - SCD + CPR)
+    Destination Clock Delay (DCD):    0.924ns = ( 15.924 - 15.000 ) 
+    Source Clock Delay      (SCD):    0.973ns
+    Clock Pessimism Removal (CPR):    0.000ns
+  Clock Uncertainty:      0.035ns  ((TSJ^2 + TIJ^2)^1/2 + DJ) / 2 + PE
+    Total System Jitter     (TSJ):    0.071ns
+    Total Input Jitter      (TIJ):    0.000ns
+    Discrete Jitter          (DJ):    0.000ns
+    Phase Error              (PE):    0.000ns
+
+    Location             Delay type                Incr(ns)  Path(ns)    Netlist Resource(s)
+  -------------------------------------------------------------------    -------------------
+                         (clock clk rise edge)        0.000     0.000 r  
+                         propagated clock network latency
+                                                      0.973     0.973    
+    SLICE_X32Y129        FDRE                         0.000     0.973 r  MEM_WB/rd_addr_out_reg[2]/C
+    SLICE_X32Y129        FDRE (Prop_fdre_C_Q)         0.456     1.429 f  MEM_WB/rd_addr_out_reg[2]/Q
+                         net (fo=36, routed)          0.827     2.256    MEM_WB/Q[2]
+    SLICE_X32Y129        LUT6 (Prop_lut6_I3_O)        0.124     2.380 f  MEM_WB/rs2_data_out[4]_i_8__0/O
+                         net (fo=2, routed)           0.978     3.357    ID_EX/p_5_in
+    SLICE_X31Y129        LUT6 (Prop_lut6_I1_O)        0.124     3.481 f  ID_EX/rs2_data_out[4]_i_4/O
+                         net (fo=9, routed)           0.202     3.683    EX_MEM/rs2_data_out_reg[4]_3[0]
+    SLICE_X31Y129        LUT2 (Prop_lut2_I1_O)        0.124     3.807 r  EX_MEM/rs2_data_out[31]_i_6/O
+                         net (fo=27, routed)          0.900     4.708    EX_MEM/rs2_data_out[31]_i_6_n_0
+    SLICE_X34Y138        LUT6 (Prop_lut6_I5_O)        0.124     4.832 r  EX_MEM/rs2_data_out[20]_i_2/O
+                         net (fo=1, routed)           0.670     5.502    ID_EX/rs2_data_out_reg[20]_0
+    SLICE_X34Y138        LUT6 (Prop_lut6_I0_O)        0.124     5.626 r  ID_EX/rs2_data_out[20]_i_1__0/O
+                         net (fo=2, routed)           0.580     6.206    ID_EX/rs2_data_out_reg[31]_0[15]
+    SLICE_X34Y136        LUT3 (Prop_lut3_I2_O)        0.116     6.322 r  ID_EX/i__carry__4_i_18/O
+                         net (fo=7, routed)           0.967     7.289    ID_EX/i__carry__4_i_18_n_0
+    SLICE_X37Y134        LUT2 (Prop_lut2_I1_O)        0.328     7.617 r  ID_EX/i__carry__4_i_8/O
+                         net (fo=1, routed)           0.000     7.617    EX/alu_unit/alu_result_out[20]_i_2_0[0]
+    SLICE_X37Y134        CARRY4 (Prop_carry4_S[0]_CO[3])
+                                                      0.532     8.149 r  EX/alu_unit/result0_inferred__0/i__carry__4/CO[3]
+                         net (fo=1, routed)           0.000     8.149    EX/alu_unit/result0_inferred__0/i__carry__4_n_0
+    SLICE_X37Y135        CARRY4 (Prop_carry4_CI_O[2])
+                                                      0.239     8.388 r  EX/alu_unit/result0_inferred__0/i__carry__5/O[2]
+                         net (fo=1, routed)           0.447     8.835    ID_EX/data1[26]
+    SLICE_X38Y135        LUT6 (Prop_lut6_I3_O)        0.302     9.137 r  ID_EX/alu_result_out[26]_i_2/O
+                         net (fo=1, routed)           0.578     9.715    ID_EX/alu_result_out[26]_i_2_n_0
+    SLICE_X40Y135        LUT6 (Prop_lut6_I0_O)        0.124     9.839 r  ID_EX/alu_result_out[26]_i_1/O
+                         net (fo=2, routed)           1.007    10.846    ID_EX/alu_control_out_reg[3]_0[26]
+    SLICE_X34Y131        LUT4 (Prop_lut4_I1_O)        0.124    10.970 r  ID_EX/pc[31]_i_18/O
+                         net (fo=3, routed)           0.604    11.573    ID_EX/pc[31]_i_18_n_0
+    SLICE_X30Y129        LUT5 (Prop_lut5_I2_O)        0.124    11.697 r  ID_EX/counter_table[0][1]_i_18/O
+                         net (fo=1, routed)           0.638    12.336    ID_EX/counter_table[0][1]_i_18_n_0
+    SLICE_X30Y129        LUT6 (Prop_lut6_I3_O)        0.124    12.460 r  ID_EX/counter_table[0][1]_i_7/O
+                         net (fo=1, routed)           0.000    12.460    ID_EX/counter_table[0][1]_i_7_n_0
+    SLICE_X30Y129        MUXF7 (Prop_muxf7_I0_O)      0.209    12.669 r  ID_EX/counter_table_reg[0][1]_i_2/O
+                         net (fo=131, routed)         0.532    13.201    ID_EX/branch_taken
+    SLICE_X30Y129        LUT6 (Prop_lut6_I2_O)        0.297    13.498 r  ID_EX/pc_current_out[31]_i_1/O
+                         net (fo=160, routed)         1.187    14.685    ID_EX/pc_current_out[31]_i_1_n_0
+    SLICE_X29Y147        FDRE                                         r  ID_EX/rs1_data_out_reg[13]/R
+  -------------------------------------------------------------------    -------------------
+
+                         (clock clk rise edge)       15.000    15.000 r  
+                         propagated clock network latency
+                                                      0.924    15.924    
+                         clock pessimism              0.000    15.924    
+                         clock uncertainty           -0.035    15.889    
+    SLICE_X29Y147        FDRE (Setup_fdre_C_R)       -0.429    15.460    ID_EX/rs1_data_out_reg[13]
+  -------------------------------------------------------------------
+                         required time                         15.460    
+                         arrival time                         -14.685    
+  -------------------------------------------------------------------
+                         slack                                  0.775    
+
+
+
+
