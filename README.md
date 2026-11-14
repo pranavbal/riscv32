@@ -51,4 +51,24 @@ The 1024 x 32 data memory is implemented in LUT RAM. Timing is reported for the 
 
 The design meets timing at 66.7 MHz. Across four implementation runs with different clock targets, the slowest path measured between 13.4 and 14.2 ns, so the maximum clock frequency is estimated at about 70 MHz.
 
-The critical path begins at the forwarding select, passes through the ALU comparison to `branch_taken`, and ends at the reset input of the ID/EX pipeline registers (the flush). Roughly
+The critical path begins at the forwarding select, passes through the ALU comparison to `branch_taken`, and ends at the reset input of the ID/EX pipeline registers (the flush). Roughly 78% of its delay is routing on high-fanout nets, and only 22% is logic. Flushing only the control fields instead of the whole stage should reduce that fanout. This change has not been implemented.
+
+## Repository Structure
+
+| Path | Contents |
+|---|---|
+| `rtl/` | processor RTL |
+| `testbench/` | top-level testbench |
+| `verification/` | sequencer, agent, driver, monitor, scoreboard, golden model, coverage |
+| `constraints/` | `cpu_pipeline.xdc`, the clock constraint |
+| `docs/` | utilization and timing reports |
+| `cpu_project1/` | Vivado project and regression scripts |
+| `program.hex` | default instruction memory image |
+
+## Reproducing the Results
+
+Vivado 2025.2 is required. XSim runs the simulations, and synthesis and implementation target the xc7a100t.
+
+1. Open `cpu_project1/cpu_project1.xpr` and run a behavioral simulation.
+2. Select the test with plusargs: `+SEED=<n>` and `+N=<count>` for a random program, or `+TEST=<1-7>` for a directed test.
+3. In the Vivado Tcl console, `source cpu_project1/regress.tcl` runs the 100-seed regression and `source cpu_project1/regress_directed.tcl` runs the directed tests.
