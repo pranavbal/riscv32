@@ -98,4 +98,11 @@ seed=97 n=300 pass=204 fail=0
 seed=98 n=300 pass=206 fail=0
 seed=99 n=300 pass=218 fail=0
 seed=100 n=300 pass=226 fail=0
-TOTAL: 100 of 100 seeds passed
+
+========== RANDOM REGRESSION SUMMARY ==========
+Seeds run:       100 (seeds 1-100, 300 instructions each)
+Seeds passed:    100
+Seeds failed:    0
+Scoreboard checks: pass=21117 fail=0
+RANDOM: 100 of 100 seeds passed
+===============================================
